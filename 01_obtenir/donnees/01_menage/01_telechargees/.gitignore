@@ -1,0 +1,5 @@
+# ne pas suivre les fichier téléchargés
+# archives comprimés
+*.zip
+# répertoires décomprimés
+*/*
