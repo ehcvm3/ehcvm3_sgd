@@ -1,7 +1,7 @@
 
 #' Create attributes from a set of character-based specs
 #'
-#' @param name Character. Name of attribute.
+#' @param attrib_name Character. Name of attribute.
 #' @param fn_name Character. Name of `{susoreview}` function to use.
 #' @param df_name Character. Name of the data frame.
 #' @param condition Character. Expression used by the function.
@@ -12,12 +12,31 @@
 #'
 #' @importFrom cli cli_abort
 #' @importFrom base get0 is.null switch
-#' @importFrom rlang caller_env parse_expr expr eval_bare
-create_attribute <- function(name, fn_name, df_name, condition, attrib_vars) {
+#' @importFrom rlang caller_env parse_expr expr sym eval_bare
+create_attribute_from_spec <- function(
+  attrib_name,
+  fn_name,
+  df_name,
+  condition,
+  attrib_vars
+) {
+
+  valid_fn_names <- c(
+    # from single column
+    "extract_attribute",
+    "create_attribute",
+    # from several columns
+    "count_vars",
+    "count_list",
+    "any_vars",
+    # from several rows
+    "count_obs",
+    "any_obs",
+    "sum_vals"
+  )
 
   # check that function is valid
-  valid_fn_names <- c("any_obs", "create_attrib")
-  if (fn_name %in% valid_fn_names) {
+  if (!fn_name %in% valid_fn_names) {
 
     cli::cli_abort(
       message = c(
@@ -53,11 +72,12 @@ create_attribute <- function(name, fn_name, df_name, condition, attrib_vars) {
   # compose the call based on the function name provided
   call_expr <- base::switch(
     fn_name,
-    any_obs = rlang::expr(
-      susoreview::any_obs(
+    # from a single column
+    extract_attribute = rlang::expr(
+      susoreview::extract_attribute(
         df = df,
-        where = !!condition_expr,
-        attrib_name = name,
+        var = !!rlang::sym(condition),
+        attrib_name = attrib_name,
         attrib_vars = attrib_vars
       )
     ),
@@ -65,7 +85,60 @@ create_attribute <- function(name, fn_name, df_name, condition, attrib_vars) {
       susoreview::create_attrib(
         df = df,
         condition = !!condition_expr,
-        attrib_name = name,
+        attrib_name = attrib_name,
+        attrib_vars = attrib_vars
+      )
+    ),
+    # from several columns
+    count_vars = rlang::expr(
+      susoreview::count_vars(
+        df = df,
+        var_pattern = condition,
+        var_val = 1,
+        attrib_name = attrib_name,
+        attrib_vars = attrib_vars
+      )
+    ),
+    count_list = rlang::expr(
+      susoreview::count_list(
+        df = df,
+        var_pattern = condition,
+        missing_vals = c("##N/A##", "", NA_character_),
+        attrib_name = attrib_name,
+        attrib_vars = attrib_vars
+      )
+    ),
+    any_vars = rlang::expr(
+      susoreview::any_vars(
+        df = df,
+        var_pattern = condition,
+        var_val = 1,
+        attrib_name = attrib_name,
+        attrib_vars = attrib_vars
+      )
+    ),
+    # from several rows
+    count_obs = rlang::expr(
+      susoreview::count_obs(
+        df = df,
+        where = !!condition_expr,
+        attrib_name = attrib_name,
+        attrib_vars = attrib_vars
+      )
+    ),
+    any_obs = rlang::expr(
+      susoreview::any_obs(
+        df = df,
+        where = !!condition_expr,
+        attrib_name = attrib_name,
+        attrib_vars = attrib_vars
+      )
+    ),
+    sum_vals = rlang::expr(
+      susoreview::sum_vals(
+        df = df,
+        var = !!rlang::sym(condition),
+        attrib_name = attrib_name,
         attrib_vars = attrib_vars
       )
     )
