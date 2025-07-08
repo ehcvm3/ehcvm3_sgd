@@ -19,7 +19,9 @@ if (r_version != "4.4.1") {
 
 } else {
   cli::cli_inform(
-    "v" = "R retrouvé, avec la bonne version pour ce projet"
+    message = c(
+      "v" = "R retrouvé, avec la bonne version pour ce projet"
+    )
   )
 }
 
