@@ -48,7 +48,7 @@ creer_liste_repertoires <- function() {
       menage = list(
         telechargees = dir_obtenir_menage_telechargees,
         fusionnees = dir_obtenir_menage_fusionnees,
-        deriveees = dir_obtenir_menage_derivees
+        derivees = dir_obtenir_menage_derivees
       ),
       communautaire = list(
         telechargees = dir_obtenir_communautaire_telechargees,
