@@ -12,7 +12,7 @@
 #' @return Effet secondaire de sauvegarder une base unique dans
 #' `01_obtenir/donnees/01_menage/03_derivees`
 #'
-#' @importFrom fs dir_ls
+#' @importFrom fs dir_ls path
 #' @importFrom cli cli_abort
 #' @importFrom rlang caller_env
 #' @importFrom purrr map list_rbind
@@ -48,7 +48,8 @@ construire_df_conso_alim <- function(
 
   # liste de bases de df dont les noms de colonne sont harmonisés
   conso_df_liste <-  chemins_df |>
-    # créer une liste de df afin d'opérer sur chaque élément de cette liste de df
+    # créer une liste de df afin d'opérer sur chaque élément de
+    # cette liste de df
     purrr::map(.f = ~ haven::read_dta(file = .x)) |>
     # harmoniser les noms en éliminant la partie servant d'indice
     purrr::map(
@@ -88,6 +89,7 @@ construire_df_conso_alim <- function(
   # sauvegarder
   haven::write_dta(
     data = conso_alim,
-    path = dirs$obtenir$menage$derivees
+    path = fs::path(dirs$obtenir$menage$derivees, "conso_alim_7j.dta")
   )
+
 }
