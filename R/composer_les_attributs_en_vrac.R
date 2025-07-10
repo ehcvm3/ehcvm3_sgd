@@ -81,8 +81,8 @@ create_attribute_from_spec <- function(
         attrib_vars = attrib_vars
       )
     ),
-    create_attrib = rlang::expr(
-      susoreview::create_attrib(
+    create_attribute = rlang::expr(
+      susoreview::create_attribute(
         df = df,
         condition = !!condition_expr,
         attrib_name = attrib_name,
