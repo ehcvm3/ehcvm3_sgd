@@ -82,8 +82,8 @@ construire_df_conso_alim <- function(
     # modifier le nom et l'étiquette de variable
     # afin d'être l'identifiant pour être plus parlant
     dplyr::rename(aliment__id = conso_alim__id) |>
-    labelled::set_value_labels(
-      produit__id = "Identifiant du produit alimentaire"
+    labelled::set_variable_labels(
+      aliment__id = "Identifiant du produit alimentaire"
     )
 
   # sauvegarder
