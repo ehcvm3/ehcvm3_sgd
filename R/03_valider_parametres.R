@@ -148,3 +148,99 @@ confirmer_qnr_existe(
   type = "communautaire",
   qnr_expr = qnr_menage
 )
+
+# ------------------------------------------------------------------------------
+# Confirmer les statuts à passer en revue
+# ------------------------------------------------------------------------------
+
+if (!is.vector(statuts_a_rejeter) | !is.numeric(statuts_a_rejeter)) {
+
+  cli::cli_abort(
+    message = c(
+      "x" = paste(
+        "Le paramètre {.arg statuts_a_rejeter}",
+        "n'est le pas de la forme attendue."
+      ),
+      "i" = "Le programme s'attend à un vecteur délimité par virgule :",
+      " " = "{.code statuts_a_rejeter <- c(100, 120)}"
+    )
+  )
+
+}
+
+statuts_possibles <- c(100, 120, 130)
+
+if (!all(statuts_a_rejeter %in% statuts_possibles)) {
+
+  cli::cli_abort(
+    message = c(
+      "x" = "Valeur(s) inattendue(s) dans {.arg statuts_a_rejeter}",
+      "i" = paste(
+        "Valeurs possibles :",
+        glue::glue_collapse(statuts_possibles, sep = ", ")
+      ),
+      "i" = paste(
+        "Valeur(s) retrouvé(s) :",
+        glue::glue_collapse(statuts_a_rejeter, sep = ", ")
+      )
+    )
+  )
+
+}
+
+# ------------------------------------------------------------------------------
+# Confirmer les problèmes à rejeter
+# ------------------------------------------------------------------------------
+
+if (!is.vector(problemes_a_rejeter) | !is.numeric(problemes_a_rejeter)) {
+
+  cli::cli_abort(
+    message = c(
+      "x" = paste(
+        "Le paramètre {.arg problemes_a_rejeter}",
+        "n'est le pas de la forme attendue."
+      ),
+      "i" = "Le programme s'attend à un vecteur de délimité par virgule :",
+      " " = "{.code problemes_a_rejeter <- c(100, 120)}"
+    )
+  )
+
+}
+
+problemes_possibles <- c(1, 2, 3, 4)
+
+if (!all(problemes_a_rejeter %in% problemes_possibles)) {
+
+  cli::cli_abort(
+    message = c(
+      "x" = "Valeur(s) inattendue(s) dans {.arg problemes_a_rejeter}",
+      "i" = paste(
+        "Valeurs possibles :",
+        glue::glue_collapse(problemes_possibles, sep = ", ")
+      ),
+      "i" = paste(
+        "Valeur(s) retrouvé(s) :",
+        glue::glue_collapse(problemes_a_rejeter, sep = ", ")
+      )
+    )
+  )
+
+}
+
+# ------------------------------------------------------------------------------
+# Confirmer si le programme devrait rejeter ou pas
+# ------------------------------------------------------------------------------
+
+if (!is.logical(devrait_rejeter)) {
+
+  cli::cli_abort(
+    message = c(
+      "x" = paste(
+        "Le paramètre {.arg devrait_rejeter}",
+        "n'est le pas de la forme attendue."
+      ),
+      "i" = "Le programme s'attend à une valeur TRUE/FALSE :"
+    )
+  )
+
+}
