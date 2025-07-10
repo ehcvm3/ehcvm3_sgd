@@ -29,7 +29,7 @@ source(here::here("R", "03_valider_parametres.R"))
 # charger les programmes afférants
 # ------------------------------------------------------------------------------
 
-dir$obtenir$r |>
+dirs$obtenir$r |>
 	fs::dir_ls() |>
   purrr::walk(.f = ~ source(.x))
 
