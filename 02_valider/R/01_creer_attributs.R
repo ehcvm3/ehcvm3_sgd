@@ -17,6 +17,7 @@
 attributs_membres_spec <- tibble::tribble(
   ~ attrib_name, ~ fn_name, ~ condition, ~ attrib_vars,
   "access_internet_menage_ou_portable", "any_obs", "s01q43 == 1", "s01q43",
+  "n_chefs", "count_obs", "s01q02 == 1", "s01q02",
 ) |>
 	dplyr::mutate(df_name = "membres", .after = fn_name)
 
