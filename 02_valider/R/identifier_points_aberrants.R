@@ -43,36 +43,6 @@ identify_outliers <- function(
   # check args
   # ============================================================================
 
-  # ----------------------------------------------------------------------------
-  # comment
-  # ----------------------------------------------------------------------------
-
-  # inspect comments for glue expressions and supported values
-  has_glue_expr <- base::grepl(
-    x = comment,
-    pattern = "\\{.+\\}",
-    perl = TRUE
-  )
-  has_no_keyword <- !base::grepl(
-    x = comment,
-    pattern = "\\{(ul|ll)\\}",
-    perl = TRUE
-  )
-
-  if (has_glue_expr == TRUE & has_no_keyword == TRUE) {
-
-    cli::cli_abort(
-      message = c(
-        "x" = "Unsupported glue expression found",
-        "i" = paste(
-          "The only supported expressions are",
-          "{.code {{ul}}} and {.code {{ll}}}"
-        )
-      )
-    )
-
-  }
-
   # ============================================================================
   # defuse/transform for later use/evaluation
   # ============================================================================
