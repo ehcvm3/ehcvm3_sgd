@@ -200,7 +200,7 @@ identify_outliers <- function(
         issue_type = type,
         issue_desc = glue::glue(
           "{desc}",
-          "[GROUP VAL: value={{var_chr}}, n_obs={n_obs}, med={med}, ll={ll}, ul={ul}]",
+          "[GROUP VAL: value={.data[[var_chr]]}, n_obs={n_obs}, med={med}, ll={ll}, ul={ul}]",
           "[FUN ARGS: n_mad={n_mad}, min_obs: {min_obs}, by: {by_expr_chr}]",
           .sep = "\n"
         ),
