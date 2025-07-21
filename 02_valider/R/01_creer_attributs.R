@@ -34,6 +34,7 @@ educ_specs <- tibble::tribble(
   ~ attrib_name, ~ fn_name, ~ condition, ~ attrib_vars,
   "abandonner_educ", "any_obs", "(s02q11 == 5) | (s02q13 == 2)", "s02q1[13]",
   "bourse_educ", "any_obs", "s02q29 > 0", "s02q29",
+  "frequenter_ecole", "any_obs", "s02q09 == 1 | s02q13 == 1", "s02q09|s02q13",
 ) |>
 	dplyr::mutate(df_name = "membres", .after = fn_name)
 
@@ -286,6 +287,68 @@ attrib_biens_durable <- purrr::pmap(
   .l = biens_durables_specs,
   .f = create_attribute_from_spec
 )
+
+# ------------------------------------------------------------------------------
+# possède un véhicule
+# ------------------------------------------------------------------------------
+
+codes_vehicules <- c(
+  "828", # Voiture personnelle
+  "829", # Moto/Vélomoteur/Tricycle à moteur
+  "830", # Bicyclette, vélo de course
+  "839" # Pirogue et hors-bord (bateaux de plaisance)
+) |>
+	paste(collapse = "|")
+
+attrib_posseder_vehicule <- menages |>
+  susoreview::any_vars(
+    var_pattern = glue::glue("s12q02__({codes_vehicules})")
+    var_val = 1,
+    attrib_name = "possede_vehicule",
+  )
+
+# ------------------------------------------------------------------------------
+# possède des biens/équipements du ménage
+# ------------------------------------------------------------------------------
+
+codes_biens_equipements_menage <- c(
+  "801", # Salon  (Fauteuils et table basse)
+  "802", # Table à manger  (table + chaises)
+  "803", # Lit
+  "804", # Matelas simple
+  "805", # Armoires et autres meubles
+  "806", # Tapis
+  "807", # Fer à repasser électrique
+  "808", # Fer à repasser à charbon
+  "809", # Cuisinière à gaz ou électrique
+  "810", # Bonbonne de gaz
+  "811", # Réchaud (plaque) à gaz ou électrique
+  "812", # Four à micro-onde ou électrique
+  "813", # Foyers améliorés
+  "814", # Robot de cuisine électrique (Moulinex)
+  "815", # Mixeur/Presse-fruits non électrique
+  "816", # Réfrigérateur
+  "817", # Congélateur
+  "818", # Ventilateur sur pied
+  "819", # Radio simple/Radiocassette
+  "820", # Appareil TV
+  "821", # Magnétoscope/CD/DVD
+  "822", # Antenne parabolique / décodeur
+  "823", # Lave-linge, sèche linge
+  "824", # Aspirateur
+  "825", # Climatiseurs/splits (non installés au mur)
+  "826", # Tondeuse à gazon et autre article de jardinage
+  "833", # Chaîne Hi Fi
+  "834", # Téléphone fixe
+) |>
+	paste(collapse = "|")
+	
+attrib_posseder_biens_equipement_menage <- menages |>
+  susoreview::any_vars(
+    var_pattern = glue::glue("s12q02__({codes_biens_equipements_menage})")
+    var_val = 1,
+    attrib_name = "possede_biens_equipements_menage",
+  )
 
 # ------------------------------------------------------------------------------
 # possède des biens ayant besoin d'électricité
@@ -660,6 +723,13 @@ attrib_pratique_peche <- susoreview::create_attribute(
   attrib_vars = "s18aq01"
 )
 
+attrib_peche_poissons <- susoreview::any_vars(
+  df = menages,
+  var_pattern = "s18aq14__|s18aq20__",
+  var_val = 1,
+  attrib_name = "peche_poisson_fruit_de_mer_frais"
+)
+
 # =============================================================================
 # [18B] CHASSE
 # =============================================================================
@@ -679,6 +749,13 @@ attrib_utiliser_fusil <- susoreview::create_attribute(
   condition = s18bq03 %in% c(1, 2, 4),
   attrib_name = "utiliser_chasse",
   attrib_vars = "s18bq03"
+)
+
+attrib_chasse_gibier <- susoreview::any_vars(
+  df = menages,
+  var_pattern = "s18bq13__",
+  var_val = 1,
+  attrib_name = "chasse_gibier"
 )
 
 # =============================================================================
