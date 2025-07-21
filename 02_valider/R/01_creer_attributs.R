@@ -131,7 +131,7 @@ conso_propre_prod_specs <- tibble::tribble(
   "porc", "aliment__id %in% c(51:55, 60)",
   "lapin", "aliment__id == 57",
   "poulet", "aliment__id %in% c(69:72, 75)",
-  "autre_voillailes", "aliment__id %in% c(73:78)",
+  "autre_volailles", "aliment__id %in% c(73:78)",
   "gibier", "aliment__id %in% c(61, 62, 63, 64)",
   # poisson
   "poisson_fruit_de_mer_frais", "aliment__id %in% c(85:95, 108, 109, 112)",
@@ -384,7 +384,7 @@ intrants_appliques_specs <- tibble::tribble(
   ~ attrib_name, ~ condition, ~ attrib_vars,
   # engrais
   "appliquer_uree", "s16Aq29a1 > 0", "s16Aq29a1",
-  "appliquer_phosphate", "s16Aq29b1 > 0", "s16Aq29b1",
+  "appliquer_phosphates", "s16Aq29b1 > 0", "s16Aq29b1",
   "appliquer_npk", "s16Aq29c1 > 0", "s16Aq29c1",
   "appliquer_super_simple", "s16Aq29d1 > 0", "s16Aq29d1",
   "appliquer_super_triple", "s16Aq29e1 > 0", "s16Aq29e1",
@@ -616,7 +616,7 @@ betail_consomme_specs <- tibble::tribble(
   "porc", "elevage__id == 7",
   "lapin", "elevage__id == 8",
   "poulet", "elevage__id == 10",
-  "autre_voillailes", "elevage__id %in% c(11, 12)",
+  "autre_volailles", "elevage__id %in% c(11, 12)",
 ) |>
 	dplyr::mutate(
     df_name = "elevage",
