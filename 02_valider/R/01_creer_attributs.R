@@ -380,7 +380,7 @@ attrib_possede_biens_elec <- menages |>
 filets_securite_specs <- tibble::tribble(
   ~ attrib_name, ~ fn_name, ~ condition, ~ attrib_vars,
   "beneficie_filet_securite", "any_obs", "s15q05 == 1", "s15q05",
-  "beneficie_assistance_educ", "any_obs", "(filets_securite__id) == 15 & (s15q05 == 1)", "s15q0[25]",
+  "beneficie_assistance_educ", "any_obs", "(filets_securite__id == 15) & (s15q05 == 1)", "s15q0[25]",
   "beneficie_assistance_carburant", "any_obs", "(filets_securite__id) == 19 & (s15q05 == 1)", "s15q0[25]",
 ) |>
 	dplyr::mutate(df_name = "filets_securite", .after = fn_name)
