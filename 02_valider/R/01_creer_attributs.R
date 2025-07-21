@@ -368,7 +368,7 @@ codes_biens_electriques <- c(
 
 attrib_possede_biens_elec <- menages |>
 	susoreview::any_vars(
-    var_pattern = glue::glue("s12q03__({codes_biens_electriques})"),
+    var_pattern = glue::glue("s12q02__({codes_biens_electriques})"),
     var_val = 1,
     attrib_name = "possede_biens_elec",
   )
