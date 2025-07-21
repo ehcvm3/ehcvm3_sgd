@@ -744,7 +744,7 @@ attrib_utiliser_fusil <- susoreview::create_attribute(
   df = menages,
   # 1 = fusil de chasse, 2 = fusil tradittionel, 3 = fusil et piège
   condition = s18bq03 %in% c(1, 2, 4),
-  attrib_name = "utiliser_chasse",
+  attrib_name = "utiliser_fusil_pour_chasse",
   attrib_vars = "s18bq03"
 )
 
