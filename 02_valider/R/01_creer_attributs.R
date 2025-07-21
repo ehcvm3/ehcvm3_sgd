@@ -56,11 +56,10 @@ activite_membre_specs <- tibble::tribble(
   "travaille_agric_elevage_peche_ou_chasse",
     "any_obs", "membres", "s04q09 == 1", "s04q09",
   "travaille_entreprise",
-    "any_obs", "membres", "(s04q10 == 1) | (s04q46 == 9)", "s04q10",
+    "any_obs", "membres",
+    "(s04q10 == 1) | (s04q14 == 1) | (s04q46 == 9) | (s04q66 == 9)", "s04q1[04]|s04q[46]6",
   "travaille_agric_familiale",
     "any_obs", "membres", "s04q13 == 1", "s04q13",
-  "travail_biz_familiale",
-    "any_obs", "membres", "s04q14 == 1", "s04q14",
 )
 
 attribs_activites_membres <- purrr::pmap(
@@ -74,8 +73,6 @@ attribs_activites_membres <- purrr::pmap(
 
 revenus_specs <- tibble::tribble(
   ~ attrib_name, ~ fn_name, ~ df_name, ~ condition, ~ attrib_vars,
-  "subvient_recolte",
-    "any_obs", "membres", "s04q19 == 1", "s04q19",
   "subvient_recolte",
     "any_obs", "membres", "s04q19 == 5", "s04q19",
   "subvient_vivres_gratuits",
