@@ -28,12 +28,12 @@ charger_base_filtree <- function(
     haven::read_dta()
 
   # ne retenir que les observations à passer en revue
-  # construisanbt la base filtrée sur les `entretiens_a_valider` de sorte à
+  # construisant la base filtrée sur les `entretiens_a_valider` de sorte à
   # avoir ces observations dans chaque base
   # et ainsi garantir un valeur d'indicateur pour l'observation
   df_filtered <- entretiens_a_valider |>
     dplyr::left_join(
-      entretiens_a_valider,
+      df,
       by = c("interview__id", "interview__key")
     )
 
