@@ -14,7 +14,7 @@
 #'
 #' @importFrom fs path
 #' @importFrom haven read_dta
-#' @importFrom dplyr left_join
+#' @importFrom dplyr select left_join
 #' @importFrom rlang global_env
 charger_base_filtree <- function(
   dir,
@@ -26,6 +26,16 @@ charger_base_filtree <- function(
   # ingérer la base brute
   df <- fs::path(dir, glue::glue("{base}.dta")) |>
     haven::read_dta()
+
+  # si la base contient `interview__status`, supprimer cette variable
+  df <- df |>
+    (\(x) {
+      if ("interview__status" %in% base::names(x)) {
+        dplyr::select(x, -interview__status)
+      } else {
+        x
+      }
+    })()
 
   # ne retenir que les observations à passer en revue
   # construisant la base filtrée sur les `entretiens_a_valider` de sorte à
