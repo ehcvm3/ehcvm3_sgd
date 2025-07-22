@@ -38,7 +38,12 @@ bases <- c(
   "parcelles",
   "cultures",
   "elevage",
-  "equipements"
+  "equipements",
+  "depense_7j",
+  "depense_30j",
+  "depense_3m",
+  "depense_6m",
+  "depense_12m"
 )
 
 purrr::walk(
@@ -63,7 +68,6 @@ menages <- charger_base_filtree(
   nom = "menages",
   entretiens_a_valider = entretiens_a_valider
 )
-
 
 # travail familial dans l'entreprise familiale
 # mettre le nom en cas de serpent
