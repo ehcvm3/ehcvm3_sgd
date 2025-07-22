@@ -514,6 +514,10 @@ attribs_intrants_agric <- purrr::pmap(
   .f = create_attribute_from_spec
 )
 
+# ------------------------------------------------------------------------------
+# utilisation d'intrants agricoles
+# ------------------------------------------------------------------------------
+
 # ==============================================================================
 # [16C] Cultures
 # ==============================================================================
@@ -786,6 +790,14 @@ cueillette_specs <- tibble::tribble(
 attribs_conso_propre_prod <- purrr::pmap(
   .l = cueillette_specs,
   .f = create_attribute_from_spec
+)
+
+# pratique l'apiculture (cherche du miel)
+attrib_pratique_apiculture <- susoreview::create_attribute(
+  df = menages,
+  condition = s18cq01__9 == 1,
+  attrib_name = "pratique_apiculture",
+  attrib_vars = "s18cq01"
 )
 
 # =============================================================================
