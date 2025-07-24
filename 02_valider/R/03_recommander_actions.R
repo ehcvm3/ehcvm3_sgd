@@ -130,4 +130,4 @@ write_df_to_disk(df = attribs, dir = dirs$valider$recommandations)
 write_df_to_disk(df = issues, dir = dirs$valider$recommandations)
 
 # recommendation files
-write_df_list_to_disk(df_list = decisions, dir = dirs$valider$recommandations)
+write_df_list_to_disk(df_list = decisions_list, dir = dirs$valider$recommandations)
