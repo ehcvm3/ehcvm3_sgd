@@ -514,10 +514,6 @@ attribs_intrants_agric <- purrr::pmap(
   .f = create_attribute_from_spec
 )
 
-# ------------------------------------------------------------------------------
-# utilisation d'intrants agricoles
-# ------------------------------------------------------------------------------
-
 # ==============================================================================
 # [16C] Cultures
 # ==============================================================================
@@ -564,10 +560,13 @@ codes_autres_cereales <- c(
 	paste(collapse = "|")
 
 attrib_cultiver_cereales <- parcelles |>
-	susoreview::any_vars(
-    var_pattern = glue::glue("s16Cq05__({codes_autres_cereales})"),
-    var_val = 1,
-    attrib_name = "cultiver_cereales"
+	susoreview::any_obs(
+    where = dplyr::if_any(
+      .cols = dplyr::matches(glue::glue("s16Cq05__({codes_autres_cereales})")),
+      .fns = ~ .x == 1
+    ),
+    attrib_name = "cultiver_cereales",
+    attrib_vars = glue::glue("s16Cq05__({codes_autres_cereales})")
   )
 
 codes_tubercules <- c(
@@ -582,10 +581,13 @@ codes_tubercules <- c(
 	paste(collapse = "|")
 
 attrib_cultiver_tubercules <- parcelles |>
-	susoreview::any_vars(
-    var_pattern = glue::glue("s16Cq05__({codes_tubercules})"),
-    var_val = 1,
-    attrib_name = "cultiver_tubercules"
+	susoreview::any_obs(
+    where = dplyr::if_any(
+      .cols = dplyr::matches(glue::glue("s16Cq05__({codes_tubercules})")),
+      .fns = ~ .x == 1
+    ),
+    attrib_name = "cultiver_tubercules",
+    attrib_vars = glue::glue("s16Cq05__({codes_tubercules})")
   )
 
 # ------------------------------------------------------------------------------
