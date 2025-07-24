@@ -31,6 +31,10 @@ entretiens_a_valider <- dirs$obtenir$menage$fusionnees |>
 # bases à charger tel quel
 # ------------------------------------------------------------------------------
 
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+# données d'enquête
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+
 bases <- c(
   "membres",
   "filets_securite",
@@ -52,6 +56,29 @@ purrr::walk(
     dir = dirs$obtenir$menage$fusionnees,
     base = .x,
     nom = .x,
+    entretiens_a_valider = entretiens_a_valider
+  )
+)
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+# données de système
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+
+bases_sys <- c(
+  "interview__errors", "interview__diagnostics", "interview__comments"
+)
+
+noms_sys <- c(
+  "suso_errors", "suso_diagnostics", "comments"
+)
+
+purrr::walk2(
+  .x = bases_sys,
+  .y = noms_sys,
+  .f = ~ charger_base_filtree(
+    dir = dirs$obtenir$menage$fusionnees,
+    base = .x,
+    nom = .y,
     entretiens_a_valider = entretiens_a_valider
   )
 )
