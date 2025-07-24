@@ -855,7 +855,7 @@ equipements_agric_specs <- tibble::tribble(
   "apiculture", "c(114)",
 ) |>
 	dplyr::mutate(
-    attrib_name = "possede_equipement_{attrib_name}",
+    attrib_name = glue::glue("possede_equipement_{attrib_name}"),
     fn_name = "any_obs",
     df_name = "equipements",
     condition = glue::glue("s19q03 == 1 & equipements__id %in% {condition}"),
