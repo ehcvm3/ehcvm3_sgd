@@ -33,7 +33,15 @@ creer_liste_repertoires <- function() {
   dir_obtenir_r <- fs::path(dir_obtenir, "R")
 
   # 02 - valider
-  dir_fusionner <- here::here("02_valider")
+  dir_valider <- here::here("02_valider")
+  dir_valider_r <- fs::path(dir_valider, "R")
+  dir_valider_sortie <- fs::path(dir_valider, "sortie")
+  dir_valider_01_cas <- fs::path(dir_valider_sortie, "01_cas")
+  dir_valider_02_recommandations <- fs::path(
+    dir_valider_sortie,
+    "02_recommandations"
+  )
+  dir_valider_03_decisions <- fs::path(dir_valider_sortie, "03_decisions")
 
   # 03 - suivre
   dir_suivre <- here::here("03_suivre")
@@ -55,6 +63,13 @@ creer_liste_repertoires <- function() {
         fusionnees = dir_obtenir_communautaire_fusionnees
       ),
       r = dir_obtenir_r
+    ),
+    valider = list(
+      r = dir_valider_r,
+      sortie = dir_valider_sortie,
+      cas = dir_valider_01_cas,
+      recommandations = dir_valider_02_recommandations,
+      decisions = dir_valider_03_decisions
     )
   )
 
