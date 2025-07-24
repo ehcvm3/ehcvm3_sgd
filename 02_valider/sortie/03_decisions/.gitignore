@@ -1,0 +1,3 @@
+# ne pas suivre les fichiers de sortie Stata et Excel
+*.dta
+*.xlsx
