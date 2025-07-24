@@ -23,6 +23,11 @@ entretiens_a_valider <- dirs$obtenir$menage$fusionnees |>
     interview_complete, interview__status
   )
 
+haven::write_dta(
+  data = entretiens_a_valider,
+  path = fs::path(dirs$valider$cas, "entretiens_a_valider.dta")
+)
+
 # ==============================================================================
 # charger les bases requises
 # ==============================================================================
