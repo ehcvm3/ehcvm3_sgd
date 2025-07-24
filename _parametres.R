@@ -20,6 +20,21 @@ qnr_menage          <- ""
 qnr_communautaire   <- ""
 
 # =============================================================================
+# Questionnaire sur Designer
+# =============================================================================
+
+# fournir la "variable du questionnaire".
+# normalement, ça doit être "menage", comme la valeur de défaut ici-bas
+# pour certains, ça a été modifié, parfois pour des raisons d'organisation interne
+# pour vérifier ou modifier, voici comment faire:
+# - se connecter à Designer
+# - ouvrir le questionnaire ménage
+# - cliquer sur paramètres
+# - copier ce qui figure dans le champs "questionnaire variable" et le coller ici-bas
+# pour des informations complémentaires, voir ici: https://docs.mysurvey.solutions/questionnaire-designer/components/questionnaire-variable/
+fichier_menage <- ""
+
+# =============================================================================
 # Comportement : quels statuts et quels problèmes rejeter
 # =============================================================================
 

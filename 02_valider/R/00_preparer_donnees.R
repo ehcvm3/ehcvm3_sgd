@@ -3,7 +3,7 @@
 # ==============================================================================
 
 entretiens_a_valider <- dirs$obtenir$menage$fusionnees |>
-  fs::path( "menage.dta") |>
+  fs::path(fichier_menage) |>
   # ingérer la base principale
 	haven::read_dta() |>
   # trier les entretiens
@@ -96,7 +96,7 @@ purrr::walk2(
 # mettre le nom au pluriel
 menages <- charger_base_filtree(
   dir = dirs$obtenir$menage$fusionnees,
-  base = "menage",
+  base = fichier_menage,
   nom = "menages",
   entretiens_a_valider = entretiens_a_valider
 )
