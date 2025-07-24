@@ -189,7 +189,7 @@ conso_propre_prod_specs <- tibble::tribble(
   ) |>
 	dplyr::select(attrib_name, fn_name, df_name, condition, attrib_vars)
 
-attribs_conso_propre_prod <- purrr::pmap(
+attribs_conso_propre_prod_agric <- purrr::pmap(
   .l = conso_propre_prod_specs,
   .f = create_attribute_from_spec
 )
@@ -209,7 +209,7 @@ attrib_dep_non_alim_7d <- menages |>
 # [9C]  Dépenses non alimentaires au cours des 30 derniers jours
 # ==============================================================================
 
-attrib_dep_non_alim_7d <- menages |>
+attrib_dep_non_alim_30d <- menages |>
 	susoreview::any_vars(
     var_pattern = "s09Cq02__(409|410|411|412)",
     attrib_name = "depense_carburant_30d",
@@ -787,7 +787,7 @@ cueillette_specs <- tibble::tribble(
   ) |>
 	dplyr::select(attrib_name, fn_name, df_name, condition, attrib_vars)
 
-attribs_conso_propre_prod <- purrr::pmap(
+attribs_conso_propre_prod_cueillir <- purrr::pmap(
   .l = cueillette_specs,
   .f = create_attribute_from_spec
 )
