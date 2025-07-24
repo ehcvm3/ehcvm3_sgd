@@ -80,7 +80,7 @@ revenus_specs <- tibble::tribble(
 )
 
 attribs_revenus <- purrr::pmap(
-  .l = activite_membre_specs,
+  .l = revenus_specs,
   .f = create_attribute_from_spec
 )
 
