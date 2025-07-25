@@ -92,6 +92,15 @@ identify_outliers <- function(
     width = 500
   )
 
+  # ----------------------------------------------------------------------------
+  # exclude
+  # ----------------------------------------------------------------------------
+
+  exclude_expr_chr <- rlang::expr_text(
+    expr = rlang::enexpr(exclude),
+    width = 500
+  )
+
   # ============================================================================
   # compute thresholds for outliers
   # either by group(s) in `by` or overall
@@ -245,7 +254,7 @@ identify_outliers <- function(
         issue_desc = glue::glue(
           "{desc}",
           "[GROUP VAL: value={.data[[var_chr]]}, n_obs={n_obs}, med={med}, ll={ll}, ul={ul}]",
-          "[FUN ARGS: n_mad={n_mad}, min_obs: {min_obs}, by: {by_expr_chr}]",
+          "[FUN ARGS: exclude={exclude_expr_chr}, transform={transform}, n_mad={n_mad}, min_obs: {min_obs}, by: {by_expr_chr}]",
           .sep = "\n"
         ),
         issue_comment = glue::glue(comment),
@@ -320,7 +329,7 @@ identify_outliers <- function(
         issue_desc = glue::glue(
           "{desc}",
           "[GROUP VAL: value={{var_chr}}, n_obs={n_obs}, med={med}, ll={ll}, ul={ul}]",
-          "[FUN ARGS: n_mad={n_mad}, min_obs: {min_obs}, by: {by_expr_chr}]",
+          "[FUN ARGS: exclude={exclude_expr_chr}, transform={transform}, n_mad={n_mad}, min_obs: {min_obs}, by: {by_expr_chr}]",
           .sep = "\n"
         ),
         issue_comment = glue::glue(comment),
