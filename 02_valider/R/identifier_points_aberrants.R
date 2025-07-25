@@ -6,6 +6,8 @@
 #' (e.g., `c(var1, var2)`, `dplyr::starts_with("var")`)
 #' @param exclude Numeric vector. One or more values to exclude from the
 #' algorithm (e.g., 0 in zero-inflated distributions, DK values like 9999).
+#' @param transform Character. Name of tranformation for data prior to outlier
+#' detection. One of: "none" (no transformation), "log" (natural logarithm).
 #' @param n_mad Numeric. Acceptable distance from the median as the
 #' number of median absolute deviations.
 #' @param min_obs Numeric. Minimum number of within-group observations for
@@ -22,10 +24,11 @@
 #' if `comment_question = TRUE`, comments at the question level.
 #'
 #' @importFrom cli cli_abort
-#' @importFrom rlang enquo as_name quo_is_null expr_text enexpr as_name
+#' @importFrom rlang enquo as_name quo_is_null expr_text enexpr as_name sym
+#' englue
 #' @importFrom tidyselect eval_select
 #' @importFrom dplyr group_by pick summarise n ungroup mutate left_join if_else
-#' between filter rowwise select bind_rows
+#' between filter rowwise select bind_rows case_when
 #' @importFrom tibble tibble
 #' @importFrom glue glue glue_collapse
 identify_outliers <- function(
@@ -33,6 +36,7 @@ identify_outliers <- function(
   var,
   by = NULL,
   exclude = NULL,
+  transform = "none",
   n_mad = 2,
   min_obs = 30,
   type = 1,
@@ -119,6 +123,17 @@ identify_outliers <- function(
         x
       }
     })() |>
+    # transform values before outlier detection
+    (\(x) {
+      if (transform == "log") {
+        dplyr::mutate(
+          .data = x,
+          {{var}} := log({{var}})
+        )
+      } else {
+        x
+      }
+    })() |>
     dplyr::summarise(
       n_obs = dplyr::n(),
       med = stats::median({{var}}, na.rm = TRUE),
@@ -145,6 +160,14 @@ identify_outliers <- function(
     # drop observations with excluded values
     # so that they are not compared against outlier thresholds and classified
     dplyr::filter(!{{var}} %in% exclude) |>
+    # transform variable
+    dplyr::mutate(
+      "transform_{{var}}" := dplyr::case_when(
+        transform == "log" ~ log({{var}}),
+        transform == "none" ~ {{var}},
+        .default = {{var}}
+      )
+    ) |>
     (\(x) {
 
       if (!by_is_null) {
@@ -185,7 +208,7 @@ identify_outliers <- function(
       is_outlier = dplyr::if_else(
         condition = n_obs >= min_obs,
         true = !dplyr::between(
-          x = {{var}},
+          x = !!rlang::sym(rlang::englue("transform_{{var}}")),
           left = ll,
           right = ul
         ),
