@@ -4,6 +4,8 @@
 #' @param var Bare variable name. Variable to check for outliers.
 #' @param by tidy-select expression
 #' (e.g., `c(var1, var2)`, `dplyr::starts_with("var")`)
+#' @param exclude Numeric vector. One or more values to exclude from the
+#' algorithm (e.g., 0 in zero-inflated distributions, DK values like 9999).
 #' @param n_mad Numeric. Acceptable distance from the median as the
 #' number of median absolute deviations.
 #' @param min_obs Numeric. Minimum number of within-group observations for
@@ -30,6 +32,7 @@ identify_outliers <- function(
   df,
   var,
   by = NULL,
+  exclude = NULL,
   n_mad = 2,
   min_obs = 30,
   type = 1,
@@ -101,6 +104,21 @@ identify_outliers <- function(
         x
       }
     })() |>
+    # change excluded values, if any, to NA
+    (\(x) {
+      if (!is.null(exclude)) {
+        dplyr::mutate(
+          .data = x,
+          {{var}} := dplyr::if_else(
+            condition = {{var}} %in% exclude,
+            NA_real_,
+            {{var}}
+          )
+        )
+      } else {
+        x
+      }
+    })() |>
     dplyr::summarise(
       n_obs = dplyr::n(),
       med = stats::median({{var}}, na.rm = TRUE),
@@ -124,6 +142,9 @@ identify_outliers <- function(
   # ============================================================================
 
   df_outliers <- df |>
+    # drop observations with excluded values
+    # so that they are not compared against outlier thresholds and classified
+    dplyr::filter(!{{var}} %in% exclude) |>
     (\(x) {
 
       if (!by_is_null) {
