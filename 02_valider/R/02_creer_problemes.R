@@ -8,7 +8,10 @@ issue_aucun_chef <- susoreview::create_issue(
   where = n_chefs == 0,
   type = 1,
   desc = "Aucun chef de ménage",
-  comment = ""
+  comment = paste(
+    "ERREUR: Aucun membre n'est désigné comme chef.",
+    "Veuillez identifier le membre qui est chef du ménage."
+  )
 )
 
 issue_aucun_chef <- susoreview::create_issue(
@@ -17,7 +20,10 @@ issue_aucun_chef <- susoreview::create_issue(
   where = n_chefs > 1,
   type = 1,
   desc = "Trop de chefs de ménage",
-  comment = ""
+  comment = paste(
+    "ERREUR: Plus d'un membre désigné comme chef du ménage.",
+    "Veuillez identifier le membre qui est chef du ménage."
+  )
 )
 
 # ==============================================================================
@@ -30,6 +36,11 @@ issue_aucun_chef <- susoreview::create_issue(
 
 # travaille dans "l'agric" sans que le ménage pratique "l'agric"
 # (i.e., l'agriculture, l'élèvage, la pêche, ou la chasse)
+desc_travail_agric_sans_pratiquer <- paste(
+  "Un membre travaille dans un domaine agricole sans que le ménage",
+  "participe dans l'agriculture, l'élevage, la pêche, ou la chasse."
+)
+
 issue_travail_agric_sans_pratiquer <- susoreview::create_issue(
   df_attribs = attribs,
   vars = c(
@@ -40,28 +51,60 @@ issue_travail_agric_sans_pratiquer <- susoreview::create_issue(
     travaille_agric_elevage_peche_ou_chasse == 1 &
     (pratique_agric == 1 | pratique_peche == 1 | pratique_peche),
   type = 1,
-  desc = "",
-  comment = ""
+  desc = desc_travail_agric_sans_pratiquer,
+  comment = paste(
+    glue::glue("ERREUR: {desc_travail_agric_sans_pratiquer}"),
+    "Dans le module 4A, un membre ou plus du ménage déclare travailler dans",
+    "une activité agricole dans les 7 derniers jour.",
+    "Or, le ménage ne déclare aucune activité agricole :",
+    "ni l'agriculture (module 16A),",
+    "ni l'élevage (module 17),",
+    "ni la chasse (module 18B)",
+    "Veuillez confirmer les réponses et corriger l'incohérence."
+  )
 )
 
 # travaille dans un commerce sans que le ménage ait une entreprise
+desc_travail_biz_sans_biz <- paste(
+  "Un membre travaille dans une entreprise familiale sans que le ménage",
+  "déclare une entreprise non-agricole."
+)
+
 issue_travail_biz_sans_biz <- susoreview::create_issue(
   df_attribs = attribs,
   vars = c("travaille_entreprise", "possede_entreprise"),
   where = travaille_entreprise == 1 & possede_entreprise == 0,
   type = 1,
-  desc = "",
-  comment = ""
+  desc = glue::glue("{desc_travail_biz_sans_biz}"),
+  comment = paste(
+    glue::glue("ERREUR: {desc_travail_biz_sans_biz}"),
+    "Dans le module 4A, un membre ou plus du ménage déclare travailler dans",
+    "une entreprise familiale",
+    "Or, dans le module 10, le ménage ne déclare aucune une entreprise",
+    "non-agricole.",
+    "Veuillez confirmer les réponses et corriger l'incohérence."
+  )
 )
 
 # travaille dans l'agriculture familiale sans pratique l'agriculture
+desc_travail_agric_sans_agric <- paste(
+  "Un membre travaille dans un champs ou jardin du ménage sans que le ménage",
+  "déclare une une parcelle agricole."
+)
 issue_travail_agric_sans_agric <- susoreview::create_issue(
   df_attribs = attribs,
   vars = c("travaille_agric_familiale", "pratique_agric"),
   where = travaille_agric_familiale == 1 & pratique_agric == 0,
   type = 1,
-  desc = "",
-  comment = ""
+  desc = glue::glue("{desc_travail_agric_sans_agric}"),
+  comment = paste(
+    "ERREUR: {desc_travail_agric_sans_agric}",
+    "Dans le module 4A, un membre ou plus du ménage déclare cultiver un",
+    "champs ou jardin.",
+    "Or, dans le module 16A, le ménage déclare ne cultiver aucune parcelle,",
+    "que cette parcelle lui appartienne ou pas.",
+    "Veuillez confirmer les réponses et corriger l'incohérence."
+  )
 )
 
 # ------------------------------------------------------------------------------
@@ -118,16 +161,32 @@ issue_abandon_educ_pour_emploi_lvl_menage <-
 # vit d'une pension sans déclarer un revenu de pension
 
 # vit de ses récoltes sans pratiquer l'agriculture
+desc_vit_recoltes_sans_agric <- paste(
+  "Un membre vit de ses récolte, mais le ménage ne cultive pas",
+  "des parcelles agricoles"
+)
 issue_vit_recoltes_sans_agric <- susoreview::create_issue(
   df_attribs = attribs,
   vars = c("subvient_recolte", "pratique_agric"),
   where = subvient_recolte == 1 & pratique_agric == 0,
   type = 1,
-  desc = "",
-  comment = ""
+  desc = glue::glue("{desc_vit_recoltes_sans_agric}"),
+  comment = paste(
+    "ERREUR: {desc_vit_recoltes_sans_agric}",
+    "Dans le module 4A, un membre déclare ne pas travailler et subvenir à",
+    "ces besoins par le produit de ses récoltes.",
+    "Or, dans le module 16A, le ménage déclare ne pas cultiver de parcelle,",
+    "que celui-ci lui appartienne ou pas.",
+    "Veuillez confirmer les réponses et corriger l'incohérence."
+  )
 )
 
 # vit de transfert de vivres gratuits, sqns transfert ni filet de sécurité
+desc_vit_vivres_gratuit_sans_recevoir <- paste(
+  "Un membre du ménage déclare vivre de tranfert de vivres gratuits,",
+  "mais le ménage n'a ni reçu de transfert",
+  "ni bénéficié d'un programme de filet de sécurité."
+)
 issue_vit_vivres_gratuit_sans_recevoir <- susoreview::create_issue(
   df_attribs = attribs,
   vars = c("subvient_vivres_gratuits", "transfert_recu", "beneficie_filet_securite"),
@@ -135,8 +194,16 @@ issue_vit_vivres_gratuit_sans_recevoir <- susoreview::create_issue(
     (subvient_vivres_gratuits == 1) &
     (transfert_recu == 0 & beneficie_filet_securite == 0),
   type = 1,
-  desc = "",
-  comment = ""
+  desc = glue::glue("{desc_vit_vivres_gratuit_sans_recevoir}"),
+  comment = paste(
+    "ERREUR: {desc_vit_vivres_gratuit_sans_recevoir}",
+    "Dans le module 4A, un membre déclare ne pas travailler et subvenir à",
+    "ces besoins par des transferts de vivres gratuits.",
+    "Or, le ménage déclare ne pas recevoir de tels transferts.",
+    "En particulier, aucun transfert de parent ou de proche (module 13)",
+    "aucun filet de sécurité (module 15).",
+    "Veuillez confirmer les réponses et corriger l'incohérence."
+  )
 )
 
 # ------------------------------------------------------------------------------
@@ -144,53 +211,103 @@ issue_vit_vivres_gratuit_sans_recevoir <- susoreview::create_issue(
 # ------------------------------------------------------------------------------
 
 # éducation, sans qu'aucun membre ne fréquente l'école
+desc_pret_educ_sans_ecole <- paste(
+  "Un membre a reçu un prêt pour les problème d'éducation,",
+  "mais aucun membre ne fréquente l'école."
+)
 issue_pret_educ_sans_ecole <- susoreview::create_issue(
   df_attribs = attribs,
   vars = c("utiliser_pret_educ", "frequenter_ecole"),
   where = utiliser_pret_educ == 1 & frequenter_ecole == 0,
   type = 1,
-  desc = "",
-  comment = ""
+  desc = glue::glue("{desc_pret_educ_sans_ecole}"),
+  comment = paste(
+    "ERREUR: {desc_pret_educ_sans_ecole}",
+    "Dans le module 6, un membre ou plus déclare avoir reçu un prêt pour",
+    "des problèmes d'éducation.",
+    "Or, dans le module 2, aucun membre fréquente l'école.",
+    "Veuillez confirmer les réponses et corriger l'incohérence."
+  )
 )
 
 # acquisition de véhicule sans posséder de véhicule
+desc_pret_vehicule_sans_vehicule <- paste(
+  "Un membre a reçu un prêt pour acheter un véhicule,",
+  "mais le ménage ne possède aucun véhicule."
+)
 issue_pret_vehicule_sans_vehicule <- susoreview::create_issue(
   df_attribs = attribs,
   vars = c("utiliser_pret_vehicule", "possede_vehicule"),
   where = utiliser_pret_vehicule == 1 & possede_vehicule == 0,
   type = 1,
-  desc = "",
-  comment = ""
+  desc = glue::glue("{desc_pret_vehicule_sans_vehicule}"),
+  comment = paste(
+    "ERREUR: {desc_pret_vehicule_sans_vehicule}",
+    "Dans le module 6, un membre ou plus déclare avoir reçu un prêt pour",
+    "acheter un véhicule.",
+    "Or, dans le module 12, le ménage déclare ne pas posséder un véhicule.",
+    "Veuillez confirmer les réponses et corriger l'incohérence."
+  )
 )
 
 # acheter des biens/équipements du ménage sans les posséder
+desc_pret_articles_menagers_sans_posseder <- paste(
+  "Un membre a reçu un prêt pour acheter des biens/équipements du ménage,",
+  "mais le ménage ne possède aucun biens de ce type."
+)
 issue_pret_articles_menagers_sans_posseder <- susoreview::create_issue(
   df_attribs = attribs,
   vars = c("utiliser_pret_biens_menagers",  "possede_biens_equipements_menage"),
   where = utiliser_pret_biens_menagers == 1 & possede_biens_equipements_menage == 0,
   type = 1,
-  desc = "",
-  comment = ""
+  desc = glue::glue("{desc_pret_articles_menagers_sans_posseder}"),
+  comment = paste(
+    "ERREUR: {desc_pret_articles_menagers_sans_posseder}",
+    "Dans le module 6, un membre ou plus déclare avoir reçu un prêt pour",
+    "des biens/équipements du ménage.",
+    "Or, dans le module 12, le ménage déclare ne pas de tels biens.",
+    "Veuillez confirmer les réponses et corriger l'incohérence."
+  )
 )
 
 # financer une entreprise sans déclarer une entreprise
+desc_pret_biz_sans_biz <- paste(
+  "Un membre a reçu un prêt pour financer une entreprise,",
+  "mais le ménage n'a pas d'entreprise."
+)
 issue_pret_biz_sans_biz <- susoreview::create_issue(
   df_attribs = attribs,
   vars = c("utiliser_pret_biz", "possede_entreprise"),
   where = utiliser_pret_biz == 1 & possede_entreprise == 0,
   type = 1,
-  desc = "",
-  comment = ""
+  desc = glue::glue("{desc_pret_biz_sans_biz}"),
+  comment = paste(
+    glue::glue("ERREUR: {desc_pret_biz_sans_biz}"),
+    "Dans le module 6, un membre ou plus déclare avoir reçu un prêt pour",
+    "démarrer une nouvelle entreprise ou financer une entreprise existante.",
+    "Or, dans le module 10, le ménage déclare ne pas avoir d'entreprise.",
+    "Veuillez confirmer les réponses et corriger l'incohérence."
+  )
 )
 
 # acheter des intrants "agricoles" sans pratiquer "l'agriculture"
+desc_pret_intrants_agric_sans_agric <- paste(
+  "Un membre a reçu un prêt pour acheter des intrants agricoles,",
+  "mais le ménage ne pratique pas l'agriculture."
+)
 issue_pret_intrants_agric_sans_agric <- susoreview::create_issue(
   df_attribs = attribs,
   vars = c("utiliser_pret_intrants", "pratique_agric"),
   where = utiliser_pret_intrants == 1 & pratique_agric == 0,
   type = 1,
-  desc = "",
-  comment = ""
+  desc = glue::glue("{desc_pret_intrants_agric_sans_agric}"),
+  comment = paste(
+    glue::glue("{desc_pret_intrants_agric_sans_agric}"),
+    "Dans le module 6, un membre ou plus déclare avoir reçu un prêt pour",
+    "acheter des intrants agricoles.",
+    "Or, dans le module 16A, le ménage déclare ne pas cultiver de parcelles.",
+    "Veuillez confirmer les réponses et corriger l'incohérence."
+  )
 )
 
 # ------------------------------------------------------------------------------
@@ -198,58 +315,101 @@ issue_pret_intrants_agric_sans_agric <- susoreview::create_issue(
 # ------------------------------------------------------------------------------
 
 # utilise la clim sans accès à l'électricité
+desc_utiliser_clim_sans_elec <- paste(
+  "Le ménage utilise la clime mais n'a pas l'accès à l'électricité"
+)
 issue_utiliser_clim_sans_elec <- susoreview::create_issue(
   df_attribs = attribs,
   vars = c("logement_climatiseur", "access_electricite"),
   where = logement_climatiseur == 1 & access_electricite == 0,
   type = 1,
-  desc = "",
-  comment = ""
-  # - [aa] Clim (s11q03a) sans accès à l'électricité (s11q32 %in% c(1, 2, 3))
+  desc = glue::glue("{desc_utiliser_clim_sans_elec}"),
+  comment = paste(
+    glue::glue("ERREUR: {desc_utiliser_clim_sans_elec}"),
+    "Dans le module 11, le ménage déclare deux choses contradictoires.",
+    "D'une part, le ménage utilise la clime.",
+    "D'autre part, le ménage déclare ne pas avoir accès à l'életricité.",
+    "Veuillez confirmer les réponses et corriger l'incohérence."
+  )
 )
 
 # utilise un ventilateur sans accès à l'électricité
+desc_utiliser_ventilateur_sans_elec <- paste(
+  "Le ménage utilise un ventilateur mais n'a pas l'accès à l'électricité"
+)
 issue_utiliser_ventilateur_sans_elec <- susoreview::create_issue(
   df_attribs = attribs,
   vars = c("logement_ventilateur", "access_electricite"),
   where = logement_ventilateur == 1 & access_electricite == 0,
   type = 1,
-  desc = "",
-  comment = ""
-  # - [aa] Ventilateur (s11q03a) sans accès à l'électricité (s11q32 %in% c(1, 2, 3))
+  desc = glue::glue("{desc_utiliser_ventilateur_sans_elec}"),
+  comment = paste(
+    glue::glue("ERREUR: {desc_utiliser_ventilateur_sans_elec}"),
+    "Dans le module 11, le ménage déclare deux choses contradictoires.",
+    "D'une part, le ménage utilise un ventilateur.",
+    "D'autre part, le ménage déclare ne pas avoir accès à l'életricité.",
+    "Veuillez confirmer les réponses et corriger l'incohérence."
+  )
 )
 
 # utilise l'éclairage électrique sans accès à l'électricité 
+desc_utiliser_elec_eclairage_sans_elec <- paste(
+  "Le ménage utilise un l'électricité pour l'éclairage",
+  "mais n'a pas l'accès à l'électricité."
+)
 issue_utiliser_elec_eclairage_sans_elec <- susoreview::create_issue(
   df_attribs = attribs,
   vars = c("utiliser_elec_eclairer", "access_electricite"),
   where = utiliser_elec_eclairer == 1 & access_electricite == 0,
   type = 1,
-  desc = "",
-  comment = ""
-  # - [aa] Source d'éclairage = électricité (s11q36 == 1), sans accès à l'éléctricité (s11q32 %in% c(1, 2, 3))
+  desc = glue::glue("{desc_utiliser_elec_eclairage_sans_elec}"),
+  comment = paste(
+    glue::glue("ERREUR: {desc_utiliser_elec_eclairage_sans_elec}"),
+    "Dans le module 11, le ménage déclare deux choses contradictoires.",
+    "D'une part, le ménage utilise l'électricité pour l'éclairage.",
+    "D'autre part, le ménage déclare ne pas avoir accès à l'életricité.",
+    "Veuillez confirmer les réponses et corriger l'incohérence."
+  )
 )
 
 # possède des biens électriques sans accès à l'électricité 
+desc_posseder_biens_elec_sans_elec <- paste(
+  "Le ménage possède des biens électriques",
+  "mais n'a pas l'accès à l'électricité."
+)
 issue_posseder_biens_elec_sans_elec <- susoreview::create_issue(
   df_attribs = attribs,
   vars = c("possede_biens_elec", "access_electricite"),
   where = possede_biens_elec == 1 & access_electricite == 0,
   type = 1,
-  desc = "",
-  comment = ""
-  # - [aa] Possède des biens électriques (s12q02) sans accès à l'électricité (s11q32 %in% c(1, 2, 3))
+  desc = glue::glue("{desc_posseder_biens_elec_sans_elec}"),
+  comment = paste(
+    glue::glue("ERREUR: {desc_posseder_biens_elec_sans_elec}"),
+    "Dans le module 12, le ménage déclare posséder des biens qui requirent",
+    "un courrant électrique pour fonctionner.",
+    "Or, dans le module 11, le ménage dit ne pas avoir l'accès à l'électricité",
+    "Veuillez confirmer les réponses et corriger l'incohérence."
+  )
 )
 
 # utilise l'électrique pour cuisiner sans accès à l'électricité 
+desc_utiliser_elec_cuisiner_sans_elec <- paste(
+  "Le ménage utilise l'électricité pour cuisiner",
+  "mais n'a pas l'accès à l'électricité."
+)
 issue_utiliser_elec_cuisiner_sans_elec <- susoreview::create_issue(
   df_attribs = attribs,
   vars = c("utiliser_elec_cuisiner", "access_electricite"),
   where = utiliser_elec_cuisiner == 1 & access_electricite == 0,
   type = 1,
-  desc = "",
-  comment = ""
-  # - [aa] Électricité est la principale source d'énergie pour la cuisine (s11q43 == 2) sans accès à l'électricité (s11q32 %in% c(1, 2, 3))
+  desc = glue::glue("{desc_utiliser_elec_cuisiner_sans_elec}"),
+  comment = paste(
+    glue::glue("ERREUR: {desc_utiliser_elec_cuisiner_sans_elec}"),
+    "Dans le module 11, le ménage déclare deux choses contradictoires.",
+    "D'une part, le ménage utilise l'électricité pour cuisiner.",
+    "D'autre part, le ménage déclare ne pas avoir accès à l'életricité.",
+    "Veuillez confirmer les réponses et corriger l'incohérence."
+  )
 )
 
 # ------------------------------------------------------------------------------
@@ -257,25 +417,42 @@ issue_utiliser_elec_cuisiner_sans_elec <- susoreview::create_issue(
 # ------------------------------------------------------------------------------
 
 # groupe électrogène
+desc_utiliser_groupe_elec_sans_posseder <- paste(
+  "Le ménage un groupe électrogène en cas de panne",
+  "mais ne possède pas un groupe."
+)
 issue_utiliser_groupe_elec_sans_posseder <- susoreview::create_issue(
   df_attribs = attribs,
   vars = c("utiliser_groupe_pendant_panne", "possede_groupe_elec"),
   where = utiliser_groupe_pendant_panne == 1 & possede_groupe_elec == 0,
   type = 1,
-  desc = "",
-  comment = ""
-  # - [aa] Utilise un groupe électrogène en cas de coupure (s11q41 == 1) sans posséder de groupe (s12q02 == 827)
+  desc = glue::glue("{desc_utiliser_groupe_elec_sans_posseder}"),
+  comment = paste(
+    glue::glue("ERREUR: {desc_utiliser_groupe_elec_sans_posseder}"),
+    "Dans le module 11, le ménage déclare utiliser un groupe électrogène",
+    "en cas de panne du réseau d'électricité.",
+    "Or, dans le module 12, le ménage déclare ne pas posséder",
+    "un groupe électrogène",
+    "Veuillez confirmer les réponses et corriger l'incohérence."
+  )
 )
 
 # fusil de chasse
+desc_utiliser_fusil_sans_posseder <- paste(
+  "Le ménage chasse avec un fusil mais ne possède pas de fusil."
+)
 issue_utiliser_fusil_sans_posseder <- susoreview::create_issue(
   df_attribs = attribs,
   vars = c("utiliser_fusil_pour_chasse", "possede_fusil"),
   where = utiliser_fusil_pour_chasse == 1 & possede_fusil == 0,
   type = 1,
-  desc = "",
-  comment = ""
-  # - [aa] Si l'on chasse avec un fusil de chasse ((18B.03) %in% c(1, 2, 4)), il est fort probable que l'on possède un fusil ((12.02) == 1 pour la ligne 840)
+  desc = glue::glue("{desc_utiliser_fusil_sans_posseder}"),
+  comment = paste(
+    glue::glue("ERREUR: {desc_utiliser_fusil_sans_posseder}"),
+    "Dans le module 18B, le ménage déclare chasser avec un fusil.",
+    "Or, dans le module 12, le ménage déclare ne pas posséder un fusil.",
+    "Veuillez confirmer les réponses et corriger l'incohérence."
+  )
 )
 
 # ------------------------------------------------------------------------------
@@ -283,25 +460,44 @@ issue_utiliser_fusil_sans_posseder <- susoreview::create_issue(
 # ------------------------------------------------------------------------------
 
 # membre connecté à l'internet sans que la maison le soit
+desc_membre_internet_sans_connexion_menage <- paste(
+  "Un membre du ménage est connecté à l'internet à la maison ou sur portable",
+  "mais le ménage dit ne pas être connecté."
+)
 issue_membre_internet_sans_connexion_menage <- susoreview::create_issue(
   df_attribs = attribs,
   vars = c("access_internet_menage_ou_portable", "logement_internet"),
   where = access_internet_menage_ou_portable == 1 & logement_internet == 0,
   type = 1,
-  desc = "",
-  comment = ""
-  # - [aa] Au moins une personne est connecté à l'internet à la maison ou sur son téléphone portable (s01q43) sans que le ménage soit connecté (s11q50)
+  desc = glue::glue("{desc_membre_internet_sans_connexion_menage}"),
+  comment = paste(
+    glue::glue("ERREUR: {desc_membre_internet_sans_connexion_menage}"),
+    "Dans le module 1, un membre ou plus déclare être connecté à l'internet",
+    "soit à la maison soit sur son téléphone portable.",
+    "Or, dans le module 11, le ménage déclare ne pas avoir avoir accès à",
+    "l'internet à domicile, y compris par téléphone portable.",
+    "Veuillez confirmer les réponses et corriger l'incohérence."
+  )
 )
 
 # la maison est connectée à l'internet sans qu'aucun membre ne le soit
+desc_internet_maison_sans_membre_connecte <- paste(
+  "Le ménage est connecté à l'internet mais aucun membre l'est"
+)
 issue_internet_maison_sans_membre_connecte <- susoreview::create_issue(
   df_attribs = attribs,
   vars = c("logement_internet", "access_internet_menage_ou_portable"),
   where = logement_internet == 1 & access_internet_menage_ou_portable == 0,
   type = 1,
-  desc = "",
-  comment = ""
-  # - [aa] Le ménage est connecté à l'internet (s11q50) sans qu'aucun membre le soit (s01q43)
+  desc = glue::glue("{desc_internet_maison_sans_membre_connecte}"),
+  comment = paste(
+    glue::glue("{desc_internet_maison_sans_membre_connecte}"),
+    "Dans le module 11, le ménage déclare avoir accès à",
+    "l'internet à domicile, y compris par téléphone portable.",
+    "Or, dans le module 1, aucun membre déclare y avoir accès à 'linternet",
+    "à la maison ou sur son téléphone porable.",
+    "Veuillez confirmer les réponses et corriger l'incohérence."
+  )
 )
 
 # ------------------------------------------------------------------------------
@@ -309,58 +505,110 @@ issue_internet_maison_sans_membre_connecte <- susoreview::create_issue(
 # ------------------------------------------------------------------------------
 
 # faire face grâce à l'aide d'un prôche, sans recevoir de transfert
+desc_choc_aide_proche_sans_transfert <- paste(
+  "Le ménage a fait face à un choc grâce à l'aide de parents ou d'amis",
+  "mais ne déclare aucun transfert de telles personnes."
+)
 issue_choc_aide_proche_sans_transfert <- susoreview::create_issue(
   df_attribs = attribs,
   vars = c("choc_strategie_aide_proches", "transfert_recu"),
   where = choc_strategie_aide_proches == 1 & transfert_recu == 0,
   type = 1,
-  desc = "",
-  comment = ""
-  # - [aa] 2. Aide de parents ou d'amis, mais transfert (s13q09)
+  desc = glue::glue("{desc_choc_aide_proche_sans_transfert}"),
+  comment = paste(
+    glue::glue("ERREUR: {desc_choc_aide_proche_sans_transfert}"),
+    "Dans le module 14, le ménage déclare se servir de",
+    "l'aide de parents ou d'amis",
+    "pour faire face à un choc.",
+    "Or, dans le module 13, le ménage dit n'avoir reçu aucun transfert.",
+    "Veuillez confirmer les réponses et corriger l'incohérence."
+  )
 )
 
 # faire face grâce à l'aide du gouvernement, sans bénéficier d'un filet de séc
+desc_choc_aide_gouv_sans_filet_sec <- paste(
+  "Le ménage a fait face à un choc grâce à l'aide du gouvernement",
+  "mais déclare ne pas bénéficier d'aucun filet de sécurité."
+)
 issue_choc_aide_gouv_sans_filet_sec <- susoreview::create_issue(
   df_attribs = attribs,
   vars = c("choc_strategie_aide_gouv", "beneficie_filet_securite"),
   where = choc_strategie_aide_gouv == 1 & beneficie_filet_securite == 0,
   type = 1,
-  desc = "",
-  comment = ""
+  desc = glue::glue("{desc_choc_aide_gouv_sans_filet_sec}"),
+  comment = paste(
+    glue::glue("ERREUR: {desc_choc_aide_gouv_sans_filet_sec}"),
+    "Dans le module 14, le ménage déclare se servir de",
+    "l'aide du gouvernement",
+    "pour faire face à un choc.",
+    "Or, dans le module 15, le ménage dit n'avoir bénéficié d'aucun",
+    "programme de filet de sécurité.",
+    "Veuillez confirmer les réponses et corriger l'incohérence."
+  )
   # - [aa] 3. Aide du gouvernement/l'Etat, mais aucun filet de sécurité déclaré (15.02)
 )
 
 # faire face en quittant l'école, mais sans quitter
+desc_choc_descolariser_sans_quitter_ecole <- paste(
+  "Le ménage a fait face à un choc en retirant un membre de l'école,",
+  "mais aucun membre déclare quitter l'école."
+)
 issue_choc_descolariser_sans_quitter_ecole <- susoreview::create_issue(
   df_attribs = attribs,
   vars = c("choc_strategie_descolarise", "abandonner_educ"),
   where = choc_strategie_descolarise == 1 & abandonner_educ == 0,
   type = 1,
-  desc = "",
-  comment = ""
-  # - [aa] 11. Les enfants ont été déscolarisés, sans déscolarisation déclarée (module 2)
+  desc = glue::glue("{desc_choc_descolariser_sans_quitter_ecole}"),
+  comment = paste(
+    glue::glue("ERREUR: {desc_choc_descolariser_sans_quitter_ecole}"),
+    "Dans le module 14, le ménage déclare devoir",
+    "retirer un membre de l'école",
+    "pour faire face à un choc.",
+    "Or, dans le module 2, aucun membre dit avoir quitté l'école",
+    "Veuillez confirmer les réponses et corriger l'incohérence."
+  )
 )
 
 # faire face en obtenant un crédit, mais sans crédit
+desc_choc_demander_credit_sans_credit <- paste(
+  "Le ménage a fait face à un choc en demandant un crédit,",
+  "mais aucun membre déclare avoir reçu un crédit."
+)
 issue_choc_demander_credit_sans_credit <- susoreview::create_issue(
   df_attribs = attribs,
   vars = c("choc_strategie_credit", "demander_credit"),
   where = choc_strategie_credit == 1 & demander_credit == 0,
   type = 1,
-  desc = "",
-  comment = ""
-  # - [aa] 15. Obtention d'un crédit, sans prêt déclaré (module financier)
+  desc = glue::glue("{desc_choc_demander_credit_sans_credit}"),
+  comment = paste(
+    glue::glue("ERREUR: {desc_choc_demander_credit_sans_credit}"),
+    "Dans le module 14, le ménage déclare devoir",
+    "demander un crédit",
+    "pour faire face à un choc.",
+    "Or, dans le module 6, aucun membre dit avoir demandé un crédit.",
+    "Veuillez confirmer les réponses et corriger l'incohérence."
+  )
 )
 
 # faire face en vendant du bétail, mais sans vendre
+desc_choc_vendre_betail_sans_vendre <- paste(
+  "Le ménage a fait face à un choc en vendant du bétail,",
+  "mais aucun bétail n'a été vendu."
+)
 issue_choc_vendre_betail_sans_vendre <- susoreview::create_issue(
   df_attribs = attribs,
   vars = c("choc_strategie_vente_betail", "vente_betail"),
   where = choc_strategie_vente_betail == 1 & vente_betail == 0,
   type = 1,
-  desc = "",
-  comment = ""
-  # - [aa] 22.Vente de bétail, sans vente déclarée (module élevage)
+  desc = glue::glue("{desc_choc_vendre_betail_sans_vendre}"),
+  comment = paste(
+    glue::glue("ERREUR: {desc_choc_vendre_betail_sans_vendre}"),
+    "Dans le module 14, le ménage déclare devoir",
+    "vendre du bétail",
+    "pour faire face à un choc.",
+    "Or, dans le module 17, le ménage n'a pas déclaré vendre du bétail.",
+    "Veuillez confirmer les réponses et corriger l'incohérence."
+  )
 )
 
 # ------------------------------------------------------------------------------
@@ -368,25 +616,44 @@ issue_choc_vendre_betail_sans_vendre <- susoreview::create_issue(
 # ------------------------------------------------------------------------------
 
 # bénéficie d'une assistance scolaire sans bourse/allocation déclarée
+desc_filet_educ_sans_bourse <- paste(
+  "Le ménage a reçu une bourse/allocation scolaire,",
+  "mais aucun membre n'a reçu une bourse."
+)
 issue_filet_educ_sans_bourse <- susoreview::create_issue(
   df_attribs = attribs,
   vars = c("beneficie_assistance_educ", "bourse_educ"),
   where = beneficie_assistance_educ == 1 & bourse_educ == 0,
   type = 1,
-  desc = "",
-  comment = ""
-  # - [aa] Assistance education (15.05 == 1, ligne 15) sans dépense scolaire ni de bourse (module éducation)
+  desc = glue::glue("{desc_filet_educ_sans_bourse}"),
+  comment = paste(
+    glue::glue("ERREUR: {desc_filet_educ_sans_bourse}"),
+    "Dans le module 15, le ménage déclare bénéficier",
+    "d'une assistance pour l'éducation des enfants.",
+    "Or, dans le module 2, aucun membre déclare une bourse ou allocation.",
+    "pour sa scolarité.",
+    "Veuillez confirmer les réponses et corriger l'incohérence."
+  )
 )
 
 # bénéficie d'une assistance carburant sans dépenses de carburant
+desc_filet_carburant_sans_depense_carburant <- paste(
+  "Le ménage bénéfice d'une assistance en carburant",
+  "mais le ménage n'enregistre aucune consommation de carburant."
+)
 issue_filet_carburant_sans_depense_carburant <- susoreview::create_issue(
   df_attribs = attribs,
   vars = c("beneficie_assistance_carburant", "depense_carburant_7d"),
   where = beneficie_assistance_carburant == 1 & depense_carburant_7d == 0,
   type = 1,
-  desc = "",
-  comment = ""
-  # - [aa] Assistance carburant (15.05 == 1, ligne 19) sans dépense en carburant (dépense non-alimentaire)
+  desc = glue::glue("{desc_filet_carburant_sans_depense_carburant}"),
+  comment = paste(
+    glue::glue("ERREUR: {desc_filet_carburant_sans_depense_carburant}"),
+    "Dans le module 15, le ménage déclare bénéficier",
+    "d'une assistance en carburant.",
+    "Or, dans les modules 9B et 9C, il n'y a aucune consommation de carburant",
+    "Veuillez confirmer les réponses et corriger l'incohérence."
+  )
 )
 
 # ------------------------------------------------------------------------------
@@ -740,6 +1007,7 @@ issue_equipement_agric_sans_pratiquer <- purrr::pmap(
       "Dans le module 19, le ménage déclare posséder des équipements de {..3}",
       "Or dans le module {..2}, on dit ne pas pratiquer {..3}",
       "C'est à dire, le ménage déclare ne pas {..4}",
+      "Veuillez corriger ou expliquer cet contradiction.",
       .sep = " "
     )
   )
