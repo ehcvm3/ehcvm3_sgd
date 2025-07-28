@@ -3,7 +3,7 @@
 # ==============================================================================
 
 entretiens_a_valider <- dirs$obtenir$menage$fusionnees |>
-  fs::path(fichier_menage) |>
+  fs::path(paste0(fichier_menage, ".dta")) |>
   # ingérer la base principale
 	haven::read_dta() |>
   # trier les entretiens
