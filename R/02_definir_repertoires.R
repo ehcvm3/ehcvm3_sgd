@@ -12,6 +12,9 @@ creer_liste_repertoires <- function() {
 
   # 01 - obtenir
   dir_obtenir <- here::here("01_obtenir")
+  # ... meta
+  dir_obtenir_meta <- fs::path(dir_obtenir, "donnees", "00_meta")
+  dir_obtenir_equipes <- fs::path(dir_obtenir_meta, "01_composition_equipes")
   # ... ménage
   dir_obtenir_menage <- fs::path(dir_obtenir, "donnees", "01_menage")
   dir_obtenir_menage_telechargees <- fs::path(
@@ -53,6 +56,9 @@ creer_liste_repertoires <- function() {
 
   dirs <- list(
     obtenir = list(
+      meta = list(
+        equipes = dir_obtenir_equipes
+      ),
       menage = list(
         telechargees = dir_obtenir_menage_telechargees,
         fusionnees = dir_obtenir_menage_fusionnees,

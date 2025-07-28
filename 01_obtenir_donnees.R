@@ -62,3 +62,17 @@ obtenir_donnees(
   user = utilisateur,
   password = mot_de_passe
 )
+
+# ------------------------------------------------------------------------------
+# composition des équipes
+# ------------------------------------------------------------------------------
+
+cat("Téléchargement de la composition des équipes en cours")
+
+get_team_composition(
+  dir = dirs$obtenir$meta$equipes,
+  server = serveur,
+  workspace = espace_travail,
+  user = utilisateur,
+  password = mot_de_passe
+)
