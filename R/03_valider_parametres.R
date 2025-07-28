@@ -150,6 +150,46 @@ confirmer_qnr_existe(
 )
 
 # ------------------------------------------------------------------------------
+# Confirmer le nom du fichier ménage
+# ------------------------------------------------------------------------------
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+# n'est pas vide
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+
+if (fichier_menage == "") {
+
+  cli::cli_abort(
+    message = c(
+      "x" = "Paramètre {.arg fichier_menage} est vide.",
+      "i" = paste0(
+        "Veuillez lire les commentaires du fichier {.file _parametres.R}",
+        "et fournir la valeur attendue."
+      )
+    )
+  )
+
+}
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+# ne contient pas l'extension `.dta`
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+
+if (grepl(x = fichier_menage, pattern = "\\.dta")) {
+
+  cli::cli_abort(
+    message = c(
+      "x" = "Nom du fichier Stata fourni au lieu de la variable du qnr.",
+      "i" = paste0(
+        "Veuillez fournir la valeur trouvé dans Designer, en suivant les",
+        "en suivant les consignes du fichier {.file _parametre.R}"
+      )
+    )
+  )
+
+}
+
+# ------------------------------------------------------------------------------
 # Confirmer les statuts à passer en revue
 # ------------------------------------------------------------------------------
 
