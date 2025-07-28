@@ -73,7 +73,7 @@ purrr::walk(
 dirs_de_sortie <- c(
   dirs$valider$cas,
   dirs$valider$recommendations,
-  dirs$valider$decisions,
+  dirs$valider$decisions
 )
 
 cat("Supression d'anciennes sorties en cours")
@@ -86,11 +86,14 @@ purrr::walk(
 # identifier les problèmes
 # ------------------------------------------------------------------------------
 
+cat("Préparation de données à valider en cours")
+source(here::here(dirs$valider$r, "00_preparer_donnees.R"))
+
 cat("Création d'attributs en cours")
 source(here::here(dirs$valider$r, "01_creer_attributs.R"))
 
 cat("Création de problèmes en cours")
-source(here::here(dirs$valider$r, "01_creer_problemes.R"))
+source(here::here(dirs$valider$r, "02_creer_problemes.R"))
 
 cat("Calcul de recommandations en cours")
 source(here::here(dirs$valider$r, "03_recommander_actions.R"))
