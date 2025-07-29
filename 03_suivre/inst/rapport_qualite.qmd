@@ -1,0 +1,129 @@
+---
+format: html
+toc: true
+toc-depth: 3
+embed-resources: true
+params:
+  dir_proj: ""
+  fichier_menage: ""
+execute: 
+  echo: false
+  error: false
+  warning: false
+---
+
+```{r}
+#| label: définir répertoires
+
+source(fs::path(params$dir_proj, "R", "02_definir_repertoires.R"))
+```
+
+```{r}
+#| label: charges les programmes pertinents
+
+dirs$suivre$r |>
+	fs::dir_ls() |>
+	purrr::walk(.f = ~ source(.x))
+```
+
+```{r}
+#| label: identifier les entretiens achevés
+
+entretiens_acheves <- dirs$obtenir$menage$fusionnees |>
+  fs::path(paste0(params$fichier_menage, ".dta")) |>
+  # ingérer la base principale
+	haven::read_dta() |>
+  # trier les entretiens
+  # par les données de l'entretien
+  dplyr::filter(
+    # résultat de l'entretien: rempli, ménage sélectionné ou de replacement
+    (s00q08 %in% c(1, 2))
+    &
+    # toutes les visites ont été faites
+    (visite1 == 1 & visite2 == 2 & visite3 == 3)
+  ) |>
+  dplyr::mutate(interview_complete = 1) |>
+  dplyr::select(interview__id, interview__key)
+
+```
+
+```{r}
+#| label: charger les bases filtrées
+ 
+# composer les spécifications pour les fichiers à charger
+bases_specs <- c(
+  # vecteur des fichiers
+  params$fichier_menage,
+  "interview__actions"
+) |>
+  # transformer en base
+	tibble::enframe(name = NULL, value = "base") |>
+  # ajouter / créer des colonnes pour la fonction
+	dplyr::mutate(
+    nom = dplyr::case_when(
+      base == params$fichier_menage ~ "menages",
+      .default = sub(x = base, pattern = "__", replacement = "_")
+    ),
+    dir = dirs$obtenir$menage$fusionnees,
+    entretiens_acheves = list(entretiens_acheves)
+  ) |>
+  # organiser en ordre des arguments de la fonction
+	dplyr::select(dir, base, nom, entretiens_acheves)
+
+# composer les spécifications pour les fichiers à charger
+dfs_filtrees <- bases_specs |>
+	purrr::pmap(.f = filtrer_base) |>
+	rlang::set_names(nm = bases_specs$nom)
+
+```
+
+```{r}
+#| label: charger la composition des équipes
+
+superviseur_enqueteur <- fs::path(dirs$obtenir$meta, "team_composition.dta") |>
+  # ingérer la base
+	haven::read_dta() |>
+  # enlever d'éventuels utilisateur archivés
+  dplyr::filter(IsArchived == 0) |>
+  # retenir les colonnes superviseur et enquêteur, changeant les nom
+  # dans pour être en phase avec ceux de la base de entretiens et l'enquêteur
+  # responsable
+	dplyr::select(
+    supervisor = SupervisorName,
+    interviewer = UserName
+  )
+
+```
+
+```{r}
+#| label: identifier l'enquêteur responsable pour chaque entretien
+
+enquetes_enqueteur_responsable <- dfs_filtrees$interview_actions |>
+	dplyr::group_by(interview__id, interview__key) |>
+  # select the last completion event
+  # complete
+	dplyr::filter(action == 3) |>
+	# last
+	dplyr::filter(dplyr::row_number() == dplyr::n()) |>
+  dplyr::ungroup() |>
+	dplyr::select(
+    interview__id, interview__key,
+    interviewer = originator,
+    supervisor = responsible__name
+  )
+
+```
+
+
+```{r}
+#| label: créer une base qui attribue chaque entretien à un enquêteur et supervisur
+ 
+superviseur_enqueteur_entretien <- superviseur_enqueteur |>
+	dplyr::left_join(
+    y = enquetes_enqueteur_responsable,
+    by = c("supervisor", "interviewer")
+  ) |>
+	dplyr::select(supervisor, interviewer, interview__id, interview__key)
+
+```
+

@@ -49,12 +49,17 @@ creer_liste_repertoires <- function() {
   # 03 - suivre
   dir_suivre <- here::here("03_suivre")
   dir_suivre_rapport_modele <- fs::path(dir_suivre, "inst")
+  dir_suivre_r <- fs::path(dir_suivre, "R")
+  dir_suivre_progres <- fs::path(dir_suivre, "01_progres")
+  dir_suivre_qualite <- fs::path(dir_suivre, "01_qualite")
 
   # ----------------------------------------------------------------------------
   # composer la liste des chemins de répertoires
   # ----------------------------------------------------------------------------
 
   dirs <- list(
+    proj = here::here(),
+    r = here::here("R"),
     obtenir = list(
       meta = list(
         equipes = dir_obtenir_equipes
@@ -76,6 +81,12 @@ creer_liste_repertoires <- function() {
       cas = dir_valider_01_cas,
       recommandations = dir_valider_02_recommandations,
       decisions = dir_valider_03_decisions
+    ),
+    suivre = list(
+      inst = dir_suivre_rapport_modele,
+      r = dir_suivre_r,
+      progres = dir_suivre_progres,
+      qualite = dir_suivre_qualite
     )
   )
 
