@@ -184,3 +184,179 @@ reactable_fr <- reactable::reactableLang(
 
 ```
 
+## Taille du ménage
+
+```{r}
+#| label: taille du ménage
+
+# ------------------------------------------------------------------------------
+# calculer les statistiques
+# ------------------------------------------------------------------------------
+
+taille_menage_par_entretien <- equipe_enqueteur_entretien |>
+	dplyr::left_join(dfs_filtrees$menages, by = c("interview__id", "interview__key")) |>
+	dplyr::mutate(
+    dplyr::across(
+      .cols = dplyr::matches("NOM_PRENOMS__[0-9]+$"),
+      .fns = ~ !.x %in% c("##N/A##", "", NA_character_)
+    ),
+    n_membres = rowSums(
+      dplyr::pick(dplyr::matches("NOM_PRENOMS__[0-9]$")),
+      na.rm = TRUE
+    )
+  ) |>
+	dplyr::select(
+    supervisor, interviewer,
+    interview__id, interview__key,
+    n_membres,
+    semaine_entretien, periode_rapport
+  )
+
+taille_menage_par_equipe <- taille_menage_par_entretien |>
+	dplyr::filter(periode_rapport == TRUE) |>
+	dplyr::group_by(supervisor) |>
+	dplyr::summarise(
+    n_menages = dplyr::n(),
+    minimum = fivenum(n_membres, na.rm = TRUE)[1], 
+    lower_hinge = fivenum(n_membres, na.rm = TRUE)[2], 
+    median = fivenum(n_membres, na.rm = TRUE)[3], 
+    upper_hinge = fivenum(n_membres, na.rm = TRUE)[4], 
+    maximum = fivenum(n_membres, na.rm = TRUE)[5]
+  ) |>
+	dplyr::ungroup()
+
+taille_menage_ensemble <- taille_menage_par_entretien |>
+	dplyr::filter(periode_rapport == TRUE) |>
+	dplyr::summarise(
+    n_menages = dplyr::n(),
+    minimum = fivenum(n_membres, na.rm = TRUE)[1], 
+    lower_hinge = fivenum(n_membres, na.rm = TRUE)[2], 
+    median = fivenum(n_membres, na.rm = TRUE)[3], 
+    upper_hinge = fivenum(n_membres, na.rm = TRUE)[4], 
+    maximum = fivenum(n_membres, na.rm = TRUE)[5]
+  ) |>
+	dplyr::mutate(supervisor = "Ensemble", .before = 1)
+
+taille_menage_tendance_par_equipe <- taille_menage_par_entretien |>
+  # calculer la médiane par superviseur et par semaine
+  dplyr::group_by(supervisor, semaine_entretien) |>
+  dplyr::summarise(n_membres = median(n_membres, na.rm = TRUE)) |>
+  dplyr::ungroup() |>
+  # ordonner la base par superviseur et par semaine
+  dplyr::arrange(supervisor, semaine_entretien) |>
+  # créer une liste de mesures ordonnées par date pour chaque superviseur
+  # d'abord, en ramenant les colonnes de la mesure et de la date en df imbrique
+  # de sorte à préserver l'ordre
+  # ensuite, en extrayant la mesure pour en faire une colonne liste
+  dplyr::group_by(supervisor) |>
+  tidyr::nest(tendances_df = c(semaine_entretien, n_membres)) |>
+  dplyr::mutate(tendance = purrr::map(tendances_df, ~ .x$n_membres)) |>
+  dplyr::ungroup() |>
+  dplyr::select(supervisor, tendance)
+
+
+taille_menage_tendance_ensemble <- taille_menage_par_entretien |>
+  # calculer la médiane par semaine
+  dplyr::group_by(semaine_entretien) |>
+  dplyr::summarise(n_membres = median(n_membres, na.rm = TRUE)) |>
+  dplyr::ungroup() |>
+  # ordonner la base par superviseur et par semaine
+  dplyr::arrange(semaine_entretien) |>
+  # créer une liste de mesures ordonnées par date
+  # d'abord, en ramenant les colonnes de la mesure et de la date en df imbrique
+  # de sorte à préserver l'ordre
+  # ensuite, en extrayant la mesure pour en faire une colonne liste
+  tidyr::nest(tendances_df = c(semaine_entretien, n_membres)) |>
+  dplyr::mutate(tendance = purrr::map(tendances_df, ~ .x$n_membres)) |>
+  dplyr::ungroup() |>
+  dplyr::select(tendance) |>
+  dplyr::mutate(supervisor = "Ensemble", .before = 1)
+
+# ------------------------------------------------------------------------------
+# composer la base de statistiques
+# ------------------------------------------------------------------------------
+
+taille_menage_stats <- dplyr::bind_rows(
+  taille_menage_ensemble, taille_menage_par_equipe
+)
+
+taille_menage_tendance <- dplyr::bind_rows(
+  taille_menage_tendance_par_equipe, taille_menage_tendance_ensemble
+)
+
+taille_menage_tbl <- taille_menage_stats |>
+	dplyr::left_join(taille_menage_tendance, by = "supervisor")
+
+# ------------------------------------------------------------------------------
+# composer le tableau
+# ------------------------------------------------------------------------------
+
+reactable::reactable(
+  data = taille_menage_tbl,
+  defaultColDef = reactable::colDef(
+    width = 50
+  ),
+  columns = list(
+    supervisor = reactable::colDef(
+        name = "Équipe",
+        width = 120
+    ),
+    n_menages = reactable::colDef(
+        name = "N. obs",
+        width = 100
+    ),
+    minimum = reactable::colDef(name = "Min"),
+    lower_hinge = reactable::colDef(name = "Q1"),
+    median = reactable::colDef("Méd"),
+    upper_hinge = reactable::colDef("Q3"),
+    maximum = reactable::colDef("Max"),
+    tendance = reactable::colDef(
+      name = "Tendance",
+      width = 400,
+      cell = function(value, index) {
+        dataui::dui_sparkline(
+          data = value,
+          components = list(
+            dataui::dui_sparklineseries(
+              # styling
+              stroke = "#7E9384",
+              showArea = TRUE,
+              fill = "#7E9384"
+            ),
+            dataui::dui_tooltip(
+              dataui::dui_sparkpointseries(
+                #styling
+                stroke = "#7E9384",
+                fill = "#fff",
+                #litle extra interactivity for demostration purposes
+                renderLabel = htmlwidgets::JS("(d) => d.toFixed(2)")
+              )
+            )
+          )
+        )
+      }
+    )
+  ),
+  columnGroups = list(
+    reactable::colGroup(
+      name = "Période du rapport",
+      columns = c(
+        "n_menages", 
+        "minimum", "lower_hinge", "median", "upper_hinge", "maximum"
+      )
+    ),
+    reactable::colGroup(
+      name = "Période de l'enquête",
+      columns = "tendance"
+    )
+  ),
+  striped = TRUE,
+  sortable = TRUE,
+  searchable = TRUE,
+  fullWidth = FALSE,
+  compact = TRUE,
+  theme = reactable_style,
+  language = reactable_fr  
+)
+
+```
