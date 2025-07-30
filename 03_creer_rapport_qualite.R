@@ -30,7 +30,9 @@ fs::dir_ls(path = dirs$suivre$r) |>
 
 params <- list(
   dir_proj = dirs$proj,
-  fichier_menage = fichier_menage
+  fichier_menage = fichier_menage,
+  rapport_debut = rapport_debut,
+  rapport_fin = rapport_fin
 )
 
 rendre_rapport(

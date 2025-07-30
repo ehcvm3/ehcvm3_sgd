@@ -6,6 +6,8 @@ embed-resources: true
 params:
   dir_proj: ""
   fichier_menage: ""
+  rapport_debut: ""
+  rapport_fin: ""
 execute: 
   echo: false
   error: false
