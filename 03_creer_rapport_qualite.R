@@ -18,6 +18,9 @@ source(here::here("R", "02_definir_repertoires.R"))
 # charger les scripts
 # ------------------------------------------------------------------------------
 
+# des paramètres
+source(here::here("_parametres.R"))
+
 # de cette tâche
 fs::dir_ls(path = dirs$suivre$r) |>
 	purrr::walk(
