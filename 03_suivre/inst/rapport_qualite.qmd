@@ -74,7 +74,7 @@ bases_specs <- c(
   # organiser en ordre des arguments de la fonction
 	dplyr::select(dir, base, nom, entretiens_acheves)
 
-# composer les spécifications pour les fichiers à charger
+# capter les bases filtrées dans une liste de bases
 dfs_filtrees <- bases_specs |>
 	purrr::pmap(.f = filtrer_base) |>
 	rlang::set_names(nm = bases_specs$nom)
@@ -110,24 +110,46 @@ enquetes_enqueteur_responsable <- dfs_filtrees$interview_actions |>
 	# last
 	dplyr::filter(dplyr::row_number() == dplyr::n()) |>
   dplyr::ungroup() |>
+	dplyr::mutate(
+    # date d'achèvement
+    date_entretien = lubridate::as_date(date),
+    # semaine d'achèvement
+    semaine_entretien = lubridate::floor_date(
+      x = date_entretien, 
+      unit = "week", 
+      # week starts on Monday
+      week_start = getOption("lubridate.week.start", 1)
+    ),
+    # dans la période du rapport
+    periode_rapport = lubridate::`%within%`(
+      date_entretien,
+      lubridate::interval(
+          start = params$rapport_debut, 
+          end = params$rapport_fin
+      )
+    )
+  ) |>
 	dplyr::select(
     interview__id, interview__key,
     interviewer = originator,
-    supervisor = responsible__name
+    supervisor = responsible__name,
+    date_entretien, semaine_entretien, periode_rapport
   )
 
 ```
 
-
 ```{r}
 #| label: créer une base qui attribue chaque entretien à un enquêteur et supervisur
  
-superviseur_enqueteur_entretien <- superviseur_enqueteur |>
+equipe_enqueteur_entretien <- superviseur_enqueteur |>
 	dplyr::left_join(
     y = enquetes_enqueteur_responsable,
     by = c("supervisor", "interviewer")
   ) |>
-	dplyr::select(supervisor, interviewer, interview__id, interview__key)
+	dplyr::select(
+    supervisor, interviewer, interview__id, interview__key,
+    date_entretien, semaine_entretien, periode_rapport
+  )
 
 ```
 
