@@ -65,3 +65,17 @@ problemes_a_rejeter <- c(1)
 # - Dans les deux cas, les entretiens à rejeter, ainsi que les motifs de rejet,
 #   sont sauvegardés dans `/output/`
 devrait_rejeter <- FALSE
+
+# =============================================================================
+# 3. Rapport de progrès
+# =============================================================================
+
+# =============================================================================
+# 4. Rapport de qualité
+# =============================================================================
+
+# PÉRIODE DU RAPPORT: DÉBUT ET FIN
+# pour les dates,  mettre dans le format ISO 8601: AAAA-MM-JJ
+# par exemple "2025-11-25" pour le 25 novembre 2025
+rapport_debut <- ""
+rapport_fin <- ""
