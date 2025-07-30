@@ -153,3 +153,34 @@ equipe_enqueteur_entretien <- superviseur_enqueteur |>
 
 ```
 
+```{r}
+#| label: créer un sytle pour les tableaux reactable
+
+# {reactable} table style
+reactable_style <- reactable::reactableTheme(
+  headerStyle = list(color = "#ffffff", background = "#0F2B1D"),
+  groupHeaderStyle = list(color = "#ffffff", background = "#0F2B1D"),
+  stripedColor = "#edfaea",
+  searchInputStyle = list(
+    backgroundColor = "#edfaea",
+    borderColor = "#8cc0a5",
+    borderWidth = "medium",
+    "&:focus" = list(backgroundColor = "#edfaea", borderWidth = "thick", borderColor = "#0F2B1D"),
+    "&:hover, &:focus" = list(borderWidth = "thick", borderColor = "#8cc0a5"),
+    "&:hover::placeholder, &:focus::placeholder" = list(color = "#8cc0a5")            
+  )
+)
+
+# reactable UI text
+reactable_fr <- reactable::reactableLang(
+  searchPlaceholder = "Rechercher",
+  searchLabel = "Rechercher",
+  noData = "Aucune ligne retrouvée",
+  pageNext = "Suivant",
+  pagePrevious = "Précédent",
+  pageNumbers = "{page} de {pages}",
+  pageInfo = "Lignes {rowStart} à {rowEnd} de {rows} lignes"
+)
+
+```
+
