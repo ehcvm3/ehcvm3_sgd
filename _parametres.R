@@ -1,15 +1,19 @@
 # =============================================================================
-# Fournir les détails du serveur Survey Solutions
+# 1. Connexion au serveur
 # =============================================================================
+
+# -----------------------------------------------------------------------------
+# Fournir les détails du serveur Survey Solutions
+# -----------------------------------------------------------------------------
 
 serveur         <- ""
 espace_travail  <- ""
 utilisateur     <- ""
 mot_de_passe    <- ""
 
-# =============================================================================
+# -----------------------------------------------------------------------------
 # Questionnaire sur Headquarters dont les données sont à passer en revue
-# =============================================================================
+# -----------------------------------------------------------------------------
 
 # fournir un texte qui identifie le(s) questionanire(s). il peut s'agir du:
 # - nom/titre complet
@@ -19,9 +23,9 @@ mot_de_passe    <- ""
 qnr_menage          <- ""
 qnr_communautaire   <- ""
 
-# =============================================================================
+# -----------------------------------------------------------------------------
 # Questionnaire sur Designer
-# =============================================================================
+# -----------------------------------------------------------------------------
 
 # fournir la "variable du questionnaire".
 # normalement, ça doit être "menage", comme la valeur de défaut ici-bas
@@ -35,7 +39,7 @@ qnr_communautaire   <- ""
 fichier_menage <- ""
 
 # =============================================================================
-# Comportement : quels statuts et quels problèmes rejeter
+# 2. Comportement de la validation
 # =============================================================================
 
 # Fournir un vecteur délimité par virgule des statuts d'entretien
