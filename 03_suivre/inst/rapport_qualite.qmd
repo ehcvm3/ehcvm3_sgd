@@ -1,4 +1,6 @@
 ---
+title: "Rapport de qualité"
+subtitle: "Du `r params$rapport_debut` au `r params$rapport_fin`"
 format: html
 toc: true
 toc-depth: 3
