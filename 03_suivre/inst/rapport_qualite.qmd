@@ -389,6 +389,14 @@ creer_tableau_reactable <- function(
 
 ## Taille du ménage
 
+<details>
+  <summary>ℹ️ Détails du tableau</summary>
+  
+- Indicateur : Nombre de membres du ménage.
+- Source : nombre de noms renseignés dans `NOM_PRENOMS`.
+
+</details>
+
 ```{r}
 #| label: taille du ménage
 
@@ -424,6 +432,13 @@ creer_tableau_reactable(
 
 ## Consommation alimentaire
 
+<details>
+  <summary>ℹ️ Détails du tableau</summary>
+
+- Indicateur : Nombre de produits alimentaires consommées.
+- Source : nombre de produits présent dans le roster du module 7B.
+
+</details>
 
 ```{r}
 #| label: consommation alimentaire
@@ -460,6 +475,14 @@ creer_tableau_reactable(
 ```
 
 ## Consommation non-alimentaire
+
+<details>
+  <summary>ℹ️ Détails du tableau</summary>
+
+- Indicateur : Nombre de produits non-alimentaires consommées.
+- Source : questions oui/non des modules 9B à 9F
+
+</details>
 
 ```{r}
 #| label: consommation non-alimentaire
