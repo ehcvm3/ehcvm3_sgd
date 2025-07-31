@@ -515,3 +515,43 @@ creer_tableau_reactable(
 )
 
 ```
+
+## Agriculture
+
+<details>
+  <summary>ℹ️ Détails du tableau</summary>
+
+- Indicateur : % de ménages qui pratique l'agriculture.
+- Source : question `s16Aq00`
+
+</details>
+
+
+```{r}
+#| label: agriculture
+
+# calculer l'indicateur
+agric_par_entretien <- equipe_enqueteur_entretien |>
+  dplyr::left_join(
+    dfs_filtrees$menages,
+    by = c("interview__id", "interview__key")
+  ) |>
+	dplyr::mutate(
+    pct_agric = (s16Aq00 == 1),
+    pct_agric = pct_agric * 100
+  ) |>
+	dplyr::select(
+    supervisor, interviewer,
+    interview__id, interview__key,
+    pct_agric,
+    semaine_entretien, periode_rapport
+  )
+
+# créer le tableau
+creer_tableau_reactable(
+  df = agric_par_entretien,
+  var = pct_agric,
+  theme = reactable_style,
+  language = reactable_fr
+)
+```
