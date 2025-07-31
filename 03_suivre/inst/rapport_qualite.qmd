@@ -458,3 +458,37 @@ creer_tableau_reactable(
 )
 
 ```
+
+## Consommation non-alimentaire
+
+```{r}
+#| label: consommation non-alimentaire
+
+conso_non_alim_par_entretien <- equipe_enqueteur_entretien |>
+  dplyr::left_join(
+    dfs_filtrees$menages,
+    by = c("interview__id", "interview__key")
+  ) |>
+	dplyr::mutate(
+    n_prod_non_alim = rowSums(
+      dplyr::pick(dplyr::matches(
+        "(s09Bq02__|s09Cq02__|s09Dq02__|s09Eq02__|s09Fq02__)"
+      )),
+      na.rm = TRUE
+    )
+  ) |>
+	dplyr::select(
+    supervisor, interviewer,
+    interview__id, interview__key,
+    n_prod_non_alim,
+    semaine_entretien, periode_rapport
+  )
+
+creer_tableau_reactable(
+  df = conso_non_alim_par_entretien,
+  var = n_prod_non_alim,
+  theme = reactable_style,
+  language = reactable_fr
+)
+
+```
