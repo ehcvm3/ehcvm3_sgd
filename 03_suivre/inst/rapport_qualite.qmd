@@ -74,6 +74,17 @@ bases_specs <- c(
   # organiser en ordre des arguments de la fonction
 	dplyr::select(dir, base, nom, entretiens_acheves)
 
+# créer une spécification pour la consommation alimentaire
+conso_specs <- tibble::tibble(
+  dir = dirs$obtenir$menage$derivees,
+  base = "conso_alim_7j",
+  nom = "conso_alim",
+  entretiens_acheves = list(entretiens_acheves)
+)
+
+# adjoindre les spécs
+bases_specs <- dplyr::bind_rows(bases_specs, conso_specs)
+
 # capter les bases filtrées dans une liste de bases
 dfs_filtrees <- bases_specs |>
 	purrr::pmap(.f = filtrer_base) |>
@@ -342,6 +353,185 @@ reactable::reactable(
       name = "Période du rapport",
       columns = c(
         "n_menages", 
+        "minimum", "lower_hinge", "median", "upper_hinge", "maximum"
+      )
+    ),
+    reactable::colGroup(
+      name = "Période de l'enquête",
+      columns = "tendance"
+    )
+  ),
+  striped = TRUE,
+  sortable = TRUE,
+  searchable = TRUE,
+  fullWidth = FALSE,
+  compact = TRUE,
+  theme = reactable_style,
+  language = reactable_fr  
+)
+
+```
+
+## Consommation alimentaire
+
+
+```{r}
+#| label: consommation alimentaire
+
+
+# ------------------------------------------------------------------------------
+# calculer les statistiques
+# ------------------------------------------------------------------------------
+
+conso_alim_par_entretien <- equipe_enqueteur_entretien |>
+	dplyr::left_join(dfs_filtrees$conso_alim, by = c("interview__id", "interview__key")) |>
+  dplyr::mutate(n_prod_alim = !is.na(aliment__id)) |>
+  dplyr::group_by(interview__id, interview__key) |>
+	dplyr::summarise(
+    n_prod_alim = sum(n_prod_alim, na.rm = TRUE),
+    dplyr::across(
+      .cols = c(supervisor, interviewer, semaine_entretien, periode_rapport),
+      .fns = ~ dplyr::first(.x)
+    )
+  ) |>
+	dplyr::ungroup() |>
+	dplyr::select(
+    supervisor, interviewer,
+    interview__id, interview__key,
+    n_prod_alim,
+    semaine_entretien, periode_rapport
+  )
+
+conso_alim_par_equipe <- conso_alim_par_entretien |>
+	dplyr::filter(periode_rapport == TRUE) |>
+	dplyr::group_by(supervisor) |>
+	dplyr::summarise(
+    n = dplyr::n(),
+    minimum = fivenum(n_prod_alim, na.rm = TRUE)[1], 
+    lower_hinge = fivenum(n_prod_alim, na.rm = TRUE)[2], 
+    median = fivenum(n_prod_alim, na.rm = TRUE)[3], 
+    upper_hinge = fivenum(n_prod_alim, na.rm = TRUE)[4], 
+    maximum = fivenum(n_prod_alim, na.rm = TRUE)[5]
+  ) |>
+	dplyr::ungroup()
+
+conso_alim_ensemble <- conso_alim_par_entretien |>
+	dplyr::filter(periode_rapport == TRUE) |>
+	dplyr::summarise(
+    n = dplyr::n(),
+    minimum = fivenum(n_prod_alim, na.rm = TRUE)[1], 
+    lower_hinge = fivenum(n_prod_alim, na.rm = TRUE)[2], 
+    median = fivenum(n_prod_alim, na.rm = TRUE)[3], 
+    upper_hinge = fivenum(n_prod_alim, na.rm = TRUE)[4], 
+    maximum = fivenum(n_prod_alim, na.rm = TRUE)[5]
+  ) |>
+	dplyr::mutate(supervisor = "Ensemble", .before = 1)
+
+
+conso_alim_tendance_par_equipe <- conso_alim_par_entretien |>
+  # calculer la médiane par superviseur et par semaine
+  dplyr::group_by(supervisor, semaine_entretien) |>
+  dplyr::summarise(n_prod_alim = median(n_prod_alim, na.rm = TRUE)) |>
+  dplyr::ungroup() |>
+  # ordonner la base par superviseur et par semaine
+  dplyr::arrange(supervisor, semaine_entretien) |>
+  # créer une liste de mesures ordonnées par date pour chaque superviseur
+  # d'abord, en ramenant les colonnes de la mesure et de la date en df imbrique
+  # de sorte à préserver l'ordre
+  # ensuite, en extrayant la mesure pour en faire une colonne liste
+  dplyr::group_by(supervisor) |>
+  tidyr::nest(tendances_df = c(semaine_entretien, n_prod_alim)) |>
+  dplyr::mutate(tendance = purrr::map(tendances_df, ~ .x$n_prod_alim)) |>
+  dplyr::ungroup() |>
+  dplyr::select(supervisor, tendance)
+
+conso_alim_tendance_ensemble <- conso_alim_par_entretien |>
+  # calculer la médiane par semaine
+  dplyr::group_by(semaine_entretien) |>
+  dplyr::summarise(n_prod_alim = median(n_prod_alim, na.rm = TRUE)) |>
+  dplyr::ungroup() |>
+  # ordonner la base par superviseur et par semaine
+  dplyr::arrange(semaine_entretien) |>
+  # créer une liste de mesures ordonnées par date
+  # d'abord, en ramenant les colonnes de la mesure et de la date en df imbrique
+  # de sorte à préserver l'ordre
+  # ensuite, en extrayant la mesure pour en faire une colonne liste
+  tidyr::nest(tendances_df = c(semaine_entretien, n_prod_alim)) |>
+  dplyr::mutate(tendance = purrr::map(tendances_df, ~ .x$n_prod_alim)) |>
+  dplyr::ungroup() |>
+  dplyr::select(tendance) |>
+  dplyr::mutate(supervisor = "Ensemble", .before = 1)
+
+# ------------------------------------------------------------------------------
+# composer la base de statistiques
+# ------------------------------------------------------------------------------
+
+conso_alim_stats <- dplyr::bind_rows(
+  conso_alim_ensemble, conso_alim_par_equipe
+)
+
+conso_alim_tendance <- dplyr::bind_rows(
+  conso_alim_tendance_par_equipe, conso_alim_tendance_ensemble
+)
+
+conso_alim_tbl <- conso_alim_stats |>
+	dplyr::left_join(conso_alim_tendance, by = "supervisor")
+
+# ------------------------------------------------------------------------------
+# composer le tableau
+# ------------------------------------------------------------------------------
+
+reactable::reactable(
+  data = conso_alim_tbl,
+  defaultColDef = reactable::colDef(
+    width = 50
+  ),
+  columns = list(
+    supervisor = reactable::colDef(
+        name = "Équipe",
+        width = 120
+    ),
+    n = reactable::colDef(
+        name = "N. obs",
+        width = 100
+    ),
+    minimum = reactable::colDef(name = "Min"),
+    lower_hinge = reactable::colDef(name = "Q1"),
+    median = reactable::colDef("Méd"),
+    upper_hinge = reactable::colDef("Q3"),
+    maximum = reactable::colDef("Max"),
+    tendance = reactable::colDef(
+      name = "Tendance",
+      width = 400,
+      cell = function(value, index) {
+        dataui::dui_sparkline(
+          data = value,
+          components = list(
+            dataui::dui_sparklineseries(
+              # styling
+              stroke = "#7E9384",
+              showArea = TRUE,
+              fill = "#7E9384"
+            ),
+            dataui::dui_tooltip(
+              dataui::dui_sparkpointseries(
+                #styling
+                stroke = "#7E9384",
+                fill = "#fff",
+                #litle extra interactivity for demostration purposes
+                renderLabel = htmlwidgets::JS("(d) => d.toFixed(2)")
+              )
+            )
+          )
+        )
+      }
+    )
+  ),
+  columnGroups = list(
+    reactable::colGroup(
+      name = "Période du rapport",
+      columns = c(
+        "n", 
         "minimum", "lower_hinge", "median", "upper_hinge", "maximum"
       )
     ),
