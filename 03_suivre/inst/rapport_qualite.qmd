@@ -555,3 +555,42 @@ creer_tableau_reactable(
   language = reactable_fr
 )
 ```
+
+## Élevage
+
+<details>
+  <summary>ℹ️ Détails du tableau</summary>
+
+- Indicateur : % de ménages qui pratique l'élevage.
+- Source : question `s17q00`
+
+</details>
+
+```{r}
+#| label: élevage
+
+# calculer l'indicateur
+elevage_par_entretien <- equipe_enqueteur_entretien |>
+  dplyr::left_join(
+    dfs_filtrees$menages,
+    by = c("interview__id", "interview__key")
+  ) |>
+	dplyr::mutate(
+    pct_elevage = (s17q00 == 1),
+    pct_elevage = pct_elevage * 100
+  ) |>
+	dplyr::select(
+    supervisor, interviewer,
+    interview__id, interview__key,
+    pct_elevage,
+    semaine_entretien, periode_rapport
+  )
+
+# créer le tableau
+creer_tableau_reactable(
+  df = elevage_par_entretien,
+  var = pct_elevage,
+  theme = reactable_style,
+  language = reactable_fr
+)
+```
