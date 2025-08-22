@@ -92,3 +92,40 @@ if (!identical(colonnes_attendues_rejeter, colonnes_retrouvees_rejeter)) {
   )
 
 }
+
+# ------------------------------------------------------------------------------
+# effectuer le rejet sur le serveur
+# ------------------------------------------------------------------------------
+
+# charger les entretiens à rejeter
+entretiens_a_rejeter <- readxl::read_xls(path = chemin_fichier_rejet)
+
+if (nrow(entretiens_a_rejeter) == 0) {
+
+  cli::cli_abort(
+    message = c(
+      "x" = "Aucun entretien à rejeter",
+      "i" = paste(
+        "Le fichier",
+        "{.file 02_valider/sortie/03_decisions/to_reject_api.xlsx}",
+        "ne contient aucun entretien à rejeter."
+      )
+    )
+  )
+
+}
+
+# effecter le rejet pour les cas dans le fichier
+purrr::pwalk(
+  .l = entretiens_a_rejeter,
+  .f = ~ susoreview::reject_interview(
+    interview__id = ..1,
+    interview__status = ..3,
+    reject_comment = ..2,
+    statuses_to_reject = statuts_a_rejeter,
+    server = serveur,
+    workspace = espace_travail,
+    user = utilisateur,
+    password = mot_de_passe
+  )
+)
