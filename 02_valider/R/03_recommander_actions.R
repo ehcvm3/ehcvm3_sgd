@@ -131,3 +131,13 @@ write_df_to_disk(df = issues, dir = dirs$valider$recommandations)
 
 # recommendation files
 write_df_list_to_disk(df_list = decisions_list, dir = dirs$valider$recommandations)
+
+# ===========================================================================
+# Copy rejection recommendations to decisions
+# ===========================================================================
+
+fs::file_copy(
+  path = fs::path(dirs$valider$recommandations, "to_reject_api.xlsx"),
+  new_path = fs::path(dirs$valider$decisions, "to_reject_api.xlsx"),
+  overwrite = TRUE
+)

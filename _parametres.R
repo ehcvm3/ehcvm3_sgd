@@ -59,13 +59,6 @@ statuts_a_rejeter <- c(100, 120)
 # - 4 = Passer en revue
 problemes_a_rejeter <- c(1)
 
-# Rejeter les entretiens automatiquement
-# - Si TRUE, le programme demande au serveur de rejeter ces entretiens.
-# - Si FALSE, le programme ne rejette pas.
-# - Dans les deux cas, les entretiens à rejeter, ainsi que les motifs de rejet,
-#   sont sauvegardés dans `/output/`
-devrait_rejeter <- FALSE
-
 # =============================================================================
 # 3. Rapport de progrès
 # =============================================================================

@@ -1,3 +1,2 @@
-# ne pas suivre les fichiers de sortie Stata et Excel
-*.dta
+# ne pas suivre les décisions de rejet
 *.xlsx
