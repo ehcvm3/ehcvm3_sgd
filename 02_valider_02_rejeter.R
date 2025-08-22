@@ -49,3 +49,46 @@ if (fichier_rejet_existe == FALSE) {
   )
 
 }
+
+# ------------------------------------------------------------------------------
+# confirmer le contenu du fichier
+# ------------------------------------------------------------------------------
+
+# charger les entretiens à rejeter
+entretiens_a_rejeter <- readxl::read_xls(path = chemin_fichier_rejet)
+
+colonnes_retrouvees_rejeter <- names(entretiens_a_rejeter)
+
+colonnes_attendues_rejeter <- c(
+  "interview__id",
+  "reject_comment",
+  "interview__status"
+)
+
+# toutes les colonnes y sont
+if (any(!colonnes_attendues_rejeter %in% colonnes_retrouvees_rejeter)) {
+
+  cli::cli_abort(
+    message = c(
+      "x" = "Colonne(s) absente(s) du fichier des entretiens à rejeter.",
+      "i" = "Attendues : {glue::glue_collapse(colonnes_attendues_rejeter, sep = '')}",
+      "i" = "Retrouvées : {glue::glue_collapse(colonnes_retrouvees_rejeter, sep = '')}"
+    )
+  )
+
+}
+
+# les colonnes sont dans l'ordre attendu
+# sinon, la fonction `pwalk()` ne marchera pas,
+# comme elle désigne les indices de colonne
+if (!identical(colonnes_attendues_rejeter, colonnes_retrouvees_rejeter)) {
+
+  cli::cli_abort(
+    message = c(
+      "x" = "Colonnes dans le mauvais ordre dans le fichier `to_reject_api.xlsx`",
+      "i" = "Ordre attendu : {glue::glue_collapse(colonnes_attendues_rejeter, sep = '')}",
+      "i" = "Ordre retrouvée : {glue::glue_collapse(colonnes_retrouvees_rejeter, sep = '')}"
+    )
+  )
+
+}
