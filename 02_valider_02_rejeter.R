@@ -51,7 +51,7 @@ if (fichier_rejet_existe == FALSE) {
 }
 
 # ------------------------------------------------------------------------------
-# confirmer le contenu du fichier
+# confirmer les colonnes du fichier
 # ------------------------------------------------------------------------------
 
 # charger les entretiens à rejeter
@@ -94,11 +94,62 @@ if (!identical(colonnes_attendues_rejeter, colonnes_retrouvees_rejeter)) {
 }
 
 # ------------------------------------------------------------------------------
-# effectuer le rejet sur le serveur
+# confirmer le contenu des colonnes
 # ------------------------------------------------------------------------------
 
 # charger les entretiens à rejeter
-entretiens_a_rejeter <- readxl::read_xls(path = chemin_fichier_rejet)
+entretiens_a_rejeter <- readxl::read_xls(
+  path = chemin_fichier_rejet,
+  col_types = c(
+    "text", # interview__id
+    "text", # reject_comment
+    "numeric" # interview__status
+  )
+)
+
+# interview__id
+if(!all(susoapi:::is_guid(entretiens_a_rejeter$interview__id))) {
+
+  cli::cli_abort(
+    message = c(
+      "x" = "Mauvais contenu de la colonne {.var interview__id}.",
+      "i" = paste(
+        "Le programme s'attend à une valeur de {.var interview__id}",
+        "telle que retrouvée dans les données exportée.",
+        "Par exemple : ",
+        "{.val 1e8ac70dfbe045f9946d20b8b0591878}"
+      )
+    )
+  )
+
+}
+
+# interview__status
+
+# énumérer les valeurs de statut valides selon {susoreview}
+statuts_valides <- c(
+  100, # Completed
+  120, # ApprovedBySupervisor
+  130 # ApprovedByHeadquarters
+)
+
+if (any(!entretiens_a_rejeter$interview__status %in% statuts_valides)) {
+
+  cli::cli_abort(
+    message = c(
+      "x" = "Mauvais contenu de la colonne {.var interview__status}.",
+      "i" = paste(
+        "Le programme n'admet que les valeurs suivantes : ",
+        "{glue::glue_collapse(statuts_valides, sep = ', ', last = ', et ')}"
+      )
+    )
+  )
+
+}
+
+# ------------------------------------------------------------------------------
+# effectuer le rejet sur le serveur
+# ------------------------------------------------------------------------------
 
 if (nrow(entretiens_a_rejeter) == 0) {
 
