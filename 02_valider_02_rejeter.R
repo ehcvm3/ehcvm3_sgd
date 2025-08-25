@@ -51,11 +51,30 @@ if (fichier_rejet_existe == FALSE) {
 }
 
 # ------------------------------------------------------------------------------
-# confirmer les colonnes du fichier
+# confirmer qu'il y a des entretiens à rejeter
 # ------------------------------------------------------------------------------
 
 # charger les entretiens à rejeter
 entretiens_a_rejeter <- readxl::read_xls(path = chemin_fichier_rejet)
+
+if (nrow(entretiens_a_rejeter) == 0) {
+
+  cli::cli_abort(
+    message = c(
+      "x" = "Aucun entretien à rejeter",
+      "i" = paste(
+        "Le fichier",
+        "{.file 02_valider/sortie/03_decisions/to_reject_api.xlsx}",
+        "ne contient aucun entretien à rejeter."
+      )
+    )
+  )
+
+}
+
+# ------------------------------------------------------------------------------
+# confirmer les colonnes du fichier
+# ------------------------------------------------------------------------------
 
 colonnes_retrouvees_rejeter <- names(entretiens_a_rejeter)
 
@@ -150,21 +169,6 @@ if (any(!entretiens_a_rejeter$interview__status %in% statuts_valides)) {
 # ------------------------------------------------------------------------------
 # effectuer le rejet sur le serveur
 # ------------------------------------------------------------------------------
-
-if (nrow(entretiens_a_rejeter) == 0) {
-
-  cli::cli_abort(
-    message = c(
-      "x" = "Aucun entretien à rejeter",
-      "i" = paste(
-        "Le fichier",
-        "{.file 02_valider/sortie/03_decisions/to_reject_api.xlsx}",
-        "ne contient aucun entretien à rejeter."
-      )
-    )
-  )
-
-}
 
 # effecter le rejet pour les cas dans le fichier
 purrr::pwalk(
