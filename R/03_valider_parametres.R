@@ -120,8 +120,8 @@ confirmer_qnr_existe <- function(
       glue::glue_collapse(sep = ", ")
 
       qnr_var <- dplyr::case_when(
-        type == "menage" ~ "qnr_menage",
-        type == "communautaire" ~ "qnr_communautaire",
+        qnr_type == "menage" ~ "qnr_menage",
+        qnr_type == "communautaire" ~ "qnr_communautaire",
         .default = "titre du questionnaire"
       )
 
@@ -140,12 +140,12 @@ confirmer_qnr_existe <- function(
 }
 
 confirmer_qnr_existe(
-  type = "menage",
+  qnr_type = "menage",
   qnr_expr = qnr_menage
 )
 
 confirmer_qnr_existe(
-  type = "communautaire",
+  qnr_type = "communautaire",
   qnr_expr = qnr_menage
 )
 
