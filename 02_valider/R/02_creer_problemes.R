@@ -860,7 +860,8 @@ issues_conso_propre_prod_sans_cultiver <- purrr::pmap(
       "ERREUR: {..2} consommé de sa propre production sans être cultivé",
       "Dans le module 7B, on dit avoir consommé {..2} de sa propre production.",
       "Or, dans le module 16C, {..2} n'est cultivé sur aucune parcelle.",
-      "Veuillez corriger ou expliquer cet contradiction."
+      "Veuillez corriger ou expliquer cet contradiction.",
+      sep = " "
     )
   )
 ) |>
@@ -917,7 +918,8 @@ issues_conso_propre_prod_sans_elever <- purrr::pmap(
       "ERREUR: {..2} consommé de sa propre production sans être cultivé",
       "Dans le module 7B, on dit avoir consommé {..2} de sa propre production.",
       "Or, dans le module 17, il n'y a pas {..3}.",
-      "Veuillez corriger ou expliquer cet contradiction."
+      "Veuillez corriger ou expliquer cet contradiction.",
+      sep = " "
     )
   )
 ) |>
@@ -972,7 +974,8 @@ issues_conso_propre_prod_sans_pecher_chasser_cueillir <- purrr::pmap(
       "ERREUR: {..4} consommé de sa propre production sans être cultivé",
       "Dans le module 7B, on dit avoir consommé {..2} de sa propre production.",
       "Or, dans le module {..2}, {..4} n'a été {..5}.",
-      "Veuillez corriger ou expliquer cet contradiction."
+      "Veuillez corriger ou expliquer cet contradiction.",
+      sep = " "
     )
   )
 ) |>
