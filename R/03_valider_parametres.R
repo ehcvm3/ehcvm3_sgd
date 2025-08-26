@@ -146,7 +146,7 @@ confirmer_qnr_existe(
 
 confirmer_qnr_existe(
   qnr_type = "communautaire",
-  qnr_expr = qnr_menage
+  qnr_expr = qnr_communautaire
 )
 
 # ------------------------------------------------------------------------------
