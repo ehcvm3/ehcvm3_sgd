@@ -72,7 +72,7 @@ purrr::walk(
 
 dirs_de_sortie <- c(
   dirs$valider$cas,
-  dirs$valider$recommendations,
+  dirs$valider$recommandations,
   dirs$valider$decisions
 )
 
