@@ -266,21 +266,3 @@ if (!all(problemes_a_rejeter %in% problemes_possibles)) {
   )
 
 }
-
-# ------------------------------------------------------------------------------
-# Confirmer si le programme devrait rejeter ou pas
-# ------------------------------------------------------------------------------
-
-if (!is.logical(devrait_rejeter)) {
-
-  cli::cli_abort(
-    message = c(
-      "x" = paste(
-        "Le paramètre {.arg devrait_rejeter}",
-        "n'est le pas de la forme attendue."
-      ),
-      "i" = "Le programme s'attend à une valeur TRUE/FALSE :"
-    )
-  )
-
-}
