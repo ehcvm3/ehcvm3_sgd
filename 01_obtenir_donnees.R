@@ -67,7 +67,7 @@ obtenir_donnees(
 # composition des équipes
 # ------------------------------------------------------------------------------
 
-cat("Téléchargement de la composition des équipes en cours")
+cli::cli_alert_info("Téléchargement de la composition des équipes en cours")
 
 get_team_composition(
   dir = dirs$obtenir$meta$equipes,

@@ -76,7 +76,7 @@ dirs_de_sortie <- c(
   dirs$valider$decisions
 )
 
-cat("Supression d'anciennes sorties en cours")
+cli::cli_alert_info("Supression d'anciennes sorties en cours")
 purrr::walk(
   .x = dirs_de_sortie,
   .f = ~ susoflows::delete_in_dir(.x)
@@ -86,14 +86,14 @@ purrr::walk(
 # identifier les problèmes
 # ------------------------------------------------------------------------------
 
-cat("Préparation de données à valider en cours")
+cli::cli_alert_info("Préparation de données à valider en cours")
 source(here::here(dirs$valider$r, "00_preparer_donnees.R"))
 
-cat("Création d'attributs en cours")
+cli::cli_alert_info("Création d'attributs en cours")
 source(here::here(dirs$valider$r, "01_creer_attributs.R"))
 
-cat("Création de problèmes en cours")
+cli_alert_info("Création de problèmes en cours")
 source(here::here(dirs$valider$r, "02_creer_problemes.R"))
 
-cat("Calcul de recommandations en cours")
+cli_alert_info("Calcul de recommandations en cours")
 source(here::here(dirs$valider$r, "03_recommander_actions.R"))
