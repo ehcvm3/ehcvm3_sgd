@@ -55,9 +55,8 @@ obtenir_donnees <- function(
   # Décomprimer archive(s) zip
   # ----------------------------------------------------------------------------
 
-  cat(paste0("Décompression de données ", type, " en cours"))
+  susoflows::unzip_to_dir(dir_telecharger)
 
-  susoflows::unzip_to_dir(dirs$obtenir$menage$telechargees)
   # ----------------------------------------------------------------------------
   # Fusionner les fichiers
   # ----------------------------------------------------------------------------
