@@ -22,7 +22,7 @@ obtenir_donnees <- function(
 ) {
 
   dir_telecharger <- dirs$obtenir[[type]]$telechargees
-  dir_fusionner <- dirs$obtenir[[type]]$fusionees
+  dir_fusionner <- dirs$obtenir[[type]]$fusionnees
 
   # ----------------------------------------------------------------------------
   # Purger les anciens fichiers
