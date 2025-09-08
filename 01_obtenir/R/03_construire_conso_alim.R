@@ -34,7 +34,7 @@ construire_df_conso_alim <- function(
         "x" = "Aucun fichier de consommation alimentaire retrouvé",
         "i" = paste(
           "Le programme recherche des fichiers {.file conso_alim*.dta}",
-          "dans le répertoire {.file dirs$obtenir$menage$fusionnees}"
+          "dans le répertoire {.file {dirs$obtenir$menage$fusionnees}}"
         ),
         "i" = paste0(
           "Veuiller s'assurer d'avoir obtenu les données du serveur",
