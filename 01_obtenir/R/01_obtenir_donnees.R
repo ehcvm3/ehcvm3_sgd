@@ -58,6 +58,16 @@ obtenir_donnees <- function(
   cat(paste0("Décompression de données ", type, " en cours"))
 
   susoflows::unzip_to_dir(dirs$obtenir$menage$telechargees)
+  # ----------------------------------------------------------------------------
+  # Fusionner les fichiers
+  # ----------------------------------------------------------------------------
+
+  cli::cli_alert_info("Fusion des données {type} en cours")
+
+  combine_and_save_all(
+    dir_downloaded = dir_telecharger,
+    dir_combined = dir_fusionner
+  )
 
 }
 
