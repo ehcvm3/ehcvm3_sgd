@@ -11,6 +11,7 @@
 #' @param password Character. Password of the user above.
 #'
 #' @importFrom susoflows delete_in_dir download_matching unzip_to_dir
+#' @importFrom cli cli_alert_info
 obtenir_donnees <- function(
   type,
   qnr_expr,
@@ -28,7 +29,7 @@ obtenir_donnees <- function(
   # Purger les anciens fichiers
   # ----------------------------------------------------------------------------
 
-  cat(paste0("Supression d'anciennes données ", type, " en cours"))
+  cli::cli_alert_info("Supression d'anciennes données {type} en cours")
 
   # téléchargées
   susoflows::delete_in_dir(dir_telecharger)
@@ -39,7 +40,7 @@ obtenir_donnees <- function(
   # Télécharger les données en archive(s) zip
   # ----------------------------------------------------------------------------
 
-  cat(paste0("Téléchargement de données ", type, " en cours"))
+  cli::cli_alert_info("Téléchargement de données {type} en cours")
 
   susoflows::download_matching(
     matches = qnr_expr,
@@ -54,6 +55,8 @@ obtenir_donnees <- function(
   # ----------------------------------------------------------------------------
   # Décomprimer archive(s) zip
   # ----------------------------------------------------------------------------
+
+  cli::cli_alert_info("Décompression de données {type} en cours")
 
   susoflows::unzip_to_dir(dir_telecharger)
 
