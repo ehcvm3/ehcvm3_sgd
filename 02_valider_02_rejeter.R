@@ -55,7 +55,7 @@ if (fichier_rejet_existe == FALSE) {
 # ------------------------------------------------------------------------------
 
 # charger les entretiens à rejeter
-entretiens_a_rejeter <- readxl::read_xls(path = chemin_fichier_rejet)
+entretiens_a_rejeter <- readxl::read_xlsx(path = chemin_fichier_rejet)
 
 if (nrow(entretiens_a_rejeter) == 0) {
 
@@ -117,7 +117,7 @@ if (!identical(colonnes_attendues_rejeter, colonnes_retrouvees_rejeter)) {
 # ------------------------------------------------------------------------------
 
 # charger les entretiens à rejeter
-entretiens_a_rejeter <- readxl::read_xls(
+entretiens_a_rejeter <- readxl::read_xlsx(
   path = chemin_fichier_rejet,
   col_types = c(
     "text", # interview__id
