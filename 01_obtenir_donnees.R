@@ -55,7 +55,7 @@ construire_df_conso_alim(dirs = dirs)
 
 obtenir_donnees(
   type = "communautaire",
-  qnr_expr = qnr_menage,
+  qnr_expr = qnr_communautaire,
   dirs = dirs,
   server = serveur,
   workspace = espace_travail,
