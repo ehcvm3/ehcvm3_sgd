@@ -1174,7 +1174,15 @@ issue_depenses_educ <- purrr::pmap(
     comment = paste(
       glue::glue("Valeur extrême identifée pour {..2}."),
       glue::glue("La valeur de {..1}"),
-      "({.data[[var_chr]]}) s'écarte de la norme.",
+      # afficher la valeur avec le format français
+      "({
+        scales::label_number(
+          big.mark = ' ',
+          decimal.mark = ','
+        )(haven::zap_label(.data[[var_chr]]))
+        }
+      )",
+      "s'écarte de la norme.",
       "Veuillez vérier la justesse de la valeur.",
       "Si la valeur est erronnée, veuillez la corriger.",
       "Si la valeur est confirmée, veuillez laisser un commentaire explicatif."
@@ -1234,7 +1242,14 @@ issue_depenses_sante <- purrr::pmap(
     comment = paste(
       glue::glue("Valeur extrême identifée pour {..2}."),
       glue::glue("La valeur de {..1}"),
-      "({.data[[var_chr]]}) s'écarte de la norme.",
+      # afficher la valeur avec le format français
+      "({
+        scales::label_number(
+          big.mark = ' ',
+          decimal.mark = ','
+        )(haven::zap_labels(.data[[var_chr]]))
+        }
+      )",
       "Veuillez vérier la justesse de la valeur.",
       "Si la valeur est erronnée, veuillez la corriger.",
       "Si la valeur est confirmée, veuillez laisser un commentaire explicatif."
@@ -1347,7 +1362,14 @@ issue_depenses_repos_hors_menage <- purrr::pmap(
     comment = paste(
       glue::glue("Valeur extrême identifée pour {..2}."),
       glue::glue("La valeur de {..1}"),
-      "({.data[[var_chr]]}) s'écarte de la norme.",
+      # afficher la valeur avec le format français
+      "({
+        scales::label_number(
+          big.mark = ' ',
+          decimal.mark = ','
+        )(haven::zap_labels(.data[[var_chr]]))
+        }
+      )",
       "Veuillez vérier la justesse de la valeur.",
       "Si la valeur est erronnée, veuillez la corriger.",
       "Si la valeur est confirmée, veuillez laisser un commentaire explicatif."
@@ -1378,7 +1400,15 @@ issue_quantite_totale_conso_alim <- identify_outliers(
     "ERREUR: Valeur extrême identifée pour la quantité totale consommé de",
     "de {labelled::to_character(aliment__id)}",
     "en {labelled::to_character(s07bq03b)} ({labelled::to_character(s07bq03c)}).",
-    "La valeur de {var_chr} ({.data[[var_chr]]}) s'écarte de la norme.",
+    "La valeur de {var_chr}",
+    "({
+      scales::label_number(
+        big.mark = ' ',
+        decimal.mark = ','
+      )(haven::zap_label(.data[[var_chr]]))
+      }
+    )",
+    "s'écarte de la norme.",
     "Veuillez vérier la justesse de la valeur.",
     "Si la valeur est erronnée, veuillez la corriger.",
     "Si la valeur est confirmée, veuillez laisser un commentaire explicatif."
@@ -1412,8 +1442,18 @@ issue_prix_unitaire_conso_alim <- identify_outliers(
   comment = paste(
     "ERREUR: Valeur extrême identifée pour prix unitaire d'achat",
     "(i.e., prix / quantité) de {labelled::to_character(aliment__id)}",
-    "en {labelled::to_character(s07bq07b)} ({labelled::to_character(s07bq07c)}).",
-    "La valeur du prix unitaire ({.data[[var_chr]]}) s'écarte de la norme.",
+    "en {labelled::to_character(s07bq07b)}",
+    "({labelled::to_character(s07bq07c)}).",
+    "La valeur du prix unitaire",
+    # afficher la valeur avec le format français
+    "({
+      scales::label_number(
+        big.mark = ' ',
+        decimal.mark = ','
+      )(.data[[var_chr]])
+      }
+    )",
+    "s'écarte de la norme.",
     "Veuillez vérier la justesse de la valeur.",
     "Si la valeur est erronnée, veuillez la corriger.",
     "Si la valeur est confirmée, veuillez laisser un commentaire explicatif."
@@ -1465,7 +1505,16 @@ issue_conso_non_alim <- purrr::pmap(
       glue::glue("{..4}"),
       ")}",
       glue::glue("dans les {..3}"),
-      "La valeur de {var_chr} ({.data[[var_chr]]}) s'écarte de la norme.",
+      "La valeur de {var_chr}",
+      # afficher la valeur avec le format français
+      "({
+        scales::label_number(
+          big.mark = ' ',
+          decimal.mark = ','
+        )(haven::zap_labels(.data[[var_chr]]))
+        }
+      )",
+      "s'écarte de la norme.",
       "Veuillez vérier la justesse de la valeur.",
       "Si la valeur est erronnée, veuillez la corriger.",
       "Si la valeur est confirmée, veuillez laisser un commentaire explicatif."
