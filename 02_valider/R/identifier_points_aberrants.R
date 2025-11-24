@@ -12,6 +12,8 @@
 #' number of median absolute deviations.
 #' @param min_obs Numeric. Minimum number of within-group observations for
 #' outlier detection to be deemed valid.
+#' @param bounds Character. Identify the bound(s) to use when identifying
+#' outliers. One of: c("both", "upper", "lower").
 #' @param type Numeric. Type of issue. Values are as follows:
 #' `c(Reject = 1, Comment = 2, Review = 4)`
 #' @param desc Character. Short, HQ-facing description of the issue.
@@ -38,6 +40,7 @@ identify_outliers <- function(
   transform = "none",
   n_mad = 2,
   min_obs = 30,
+  bounds = "upper",
   type = 1,
   desc,
   comment,
@@ -238,17 +241,20 @@ identify_outliers <- function(
       df_w_thresholds
 
     })() |>
-    # determine whether value lies within the bounds
+    # determine whether value lies within the bound(s)
     dplyr::mutate(
-      is_outlier = dplyr::if_else(
-        condition = n_obs >= min_obs,
-        true = !dplyr::between(
-          x = !!rlang::sym(rlang::englue("transform_{{var}}")),
-          left = ll,
-          right = ul
-        ),
-        false = NA,
-        missing = NA
+      is_outlier = dplyr::case_when(
+        n_obs >= min_obs & bounds == "both" ~
+          dplyr::between(
+            x = transformed_val,
+            right = ul,
+            left = ll
+          ),
+        n_obs >= min_obs & bounds == "upper" ~
+          transformed_val > ul,
+        n_obs >= min_obs & bounds == "lower" ~
+          transformed_val < ll & (ll < ul),
+        .default = NA
       )
     ) |>
     dplyr::filter(is_outlier == TRUE)
@@ -279,8 +285,8 @@ identify_outliers <- function(
         issue_type = type,
         issue_desc = glue::glue(
           "{desc}",
-          "[GROUP VAL: value={.data[[var_chr]]}, n_obs={n_obs}, med={med}, ll={ll}, ul={ul}]",
-          "[FUN ARGS: exclude={exclude_expr_chr}, transform={transform}, n_mad={n_mad}, min_obs: {min_obs}, by: {by_expr_chr}]",
+          "[GROUP VAL: value={.data[[var_chr]]}, n_obs={n_obs}, med={med}, ll={ll}, ul={ul}, transformed_val={transformed_val}]",
+          "[FUN ARGS: exclude={exclude_expr_chr}, transform={transform}, n_mad={n_mad}, min_obs: {min_obs}, bounds: {bounds}, by: {by_expr_chr}]",
           .sep = "\n"
         ),
         issue_comment = glue::glue(comment),
@@ -354,7 +360,7 @@ identify_outliers <- function(
         issue_type = 2,
         issue_desc = glue::glue(
           "{desc}",
-          "[GROUP VAL: value={{var_chr}}, n_obs={n_obs}, med={med}, ll={ll}, ul={ul}]",
+          "[GROUP VAL: value={{var_chr}}, n_obs={n_obs}, med={med}, ll={ll}, ul={ul}, transformed_val={transformed_val}]",
           "[FUN ARGS: exclude={exclude_expr_chr}, transform={transform}, n_mad={n_mad}, min_obs: {min_obs}, by: {by_expr_chr}]",
           .sep = "\n"
         ),
