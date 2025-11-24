@@ -25,7 +25,6 @@
 #'
 #' @importFrom cli cli_abort
 #' @importFrom rlang enquo as_name quo_is_null expr_text enexpr as_name sym
-#' englue
 #' @importFrom tidyselect eval_select
 #' @importFrom dplyr group_by pick summarise n ungroup mutate left_join if_else
 #' between filter rowwise select bind_rows case_when
@@ -198,7 +197,7 @@ identify_outliers <- function(
     dplyr::filter(!{{var}} %in% exclude) |>
     # transform variable
     dplyr::mutate(
-      "transform_{{var}}" := dplyr::case_when(
+      transformed_val = dplyr::case_when(
         transform == "log" ~ log({{var}}),
         transform == "none" ~ {{var}},
         .default = {{var}}
