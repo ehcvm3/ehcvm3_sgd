@@ -18,6 +18,10 @@
 #' `c(Reject = 1, Comment = 2, Review = 4)`
 #' @param desc Character. Short, HQ-facing description of the issue.
 #' @param comment Character. Longer, field staff-facing description of the
+#' issue. Note: comments will evaluated as glue expressions, where expressions
+#' are evaluated in the context of the data passed to the outlier function.
+#' If expressions need to be evaluated beforehand, wrap that segment in a glue
+#' expression so that its scope is outside of the outlier function.
 #' @param comment_question Boolean. Whether or not to add a comment to the
 #' variable specified in `var`.
 #' issue.
