@@ -48,20 +48,6 @@ purrr::walk(
   .f = ~ source(.x)
 )
 
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-# charger les programmes de flux de travail
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-
-# ceux dont le nom commence avec un chiffre
-programmes_flux_travail <- programmes_valider |>
-	dplyr::filter(grepl(x = file_name, pattern = "^[0-9]+")) |>
-	dplyr::pull(path)
-
-purrr::walk(
-  .x = programmes_flux_travail,
-  .f = ~ source(.x)
-)
-
 # ==============================================================================
 # orchestrer les actions
 # ==============================================================================
