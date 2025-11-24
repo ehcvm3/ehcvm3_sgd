@@ -1100,6 +1100,7 @@ issue_depenses_educ <- purrr::pmap(
     var = !!rlang::sym(..1),
     exclude = c(0, 9999),
     transform = "log",
+    bounds = "upper",
     type = 2,
     desc = glue::glue("Valeur extrême pour {..2}"),
     comment = paste(
@@ -1158,6 +1159,7 @@ issue_depenses_sante <- purrr::pmap(
     var = !!rlang::sym(..1),
     exclude = c(0, 9999),
     transform = "log",
+    bounds = "upper",
     type = 2,
     desc = glue::glue("Valeur extrême pour {..2}"),
     comment = paste(
@@ -1269,6 +1271,7 @@ issue_depenses_repos_hors_menage <- purrr::pmap(
     var = !!rlang::sym(..1),
     exclude = c(0, 9999),
     transform = "log",
+    bounds = "upper",
     type = 2,
     desc = glue::glue("Valeur extrême pour {..2}"),
     comment = paste(
@@ -1297,6 +1300,7 @@ issue_quantite_totale_conso_alim <- identify_outliers(
   var = s07bq03a,
   exclude = c(0, 9999),
   transform = "log",
+  bounds = "upper",
   type = 1,
   desc = "Valeur extrême pour la quantité totale de consommation",
   comment = paste(
@@ -1330,6 +1334,7 @@ issue_prix_unitaire_conso_alim <- identify_outliers(
   var = prix_unitaire,
   exclude = c(9999),
   transform = "log",
+  bounds = "upper",
   type = 1,
   desc = "Valeur extrême pour le prix unitaire d'achat du produit",
   comment = paste(
@@ -1375,6 +1380,7 @@ issue_conso_non_alim <- purrr::pmap(
     var = !!rlang::sym(..2),
     exclude = c(9999),
     transform = "log",
+    bounds = "upper",
     type = 1,
     desc = "Valeur extrême pour la consommation dans les {..3}.",
     comment = paste(
