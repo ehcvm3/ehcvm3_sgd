@@ -79,7 +79,7 @@ issue_travail_biz_sans_biz <- susoreview::create_issue(
   comment = paste(
     glue::glue("ERREUR: {desc_travail_biz_sans_biz}"),
     "Dans le module 4A, un membre ou plus du ménage déclare travailler dans",
-    "une entreprise familiale",
+    "une entreprise familiale.",
     "Or, dans le module 10, le ménage ne déclare aucune une entreprise",
     "non-agricole.",
     "Veuillez confirmer les réponses et corriger l'incohérence."
@@ -163,7 +163,7 @@ issue_abandon_educ_pour_emploi_lvl_menage <-
 # vit de ses récoltes sans pratiquer l'agriculture
 desc_vit_recoltes_sans_agric <- paste(
   "Un membre vit de ses récolte, mais le ménage ne cultive pas",
-  "des parcelles agricoles"
+  "des parcelles agricoles."
 )
 issue_vit_recoltes_sans_agric <- susoreview::create_issue(
   df_attribs = attribs,
@@ -316,7 +316,7 @@ issue_pret_intrants_agric_sans_agric <- susoreview::create_issue(
 
 # utilise la clim sans accès à l'électricité
 desc_utiliser_clim_sans_elec <- paste(
-  "Le ménage utilise la clime mais n'a pas l'accès à l'électricité"
+  "Le ménage utilise la clime mais n'a pas l'accès à l'électricité."
 )
 issue_utiliser_clim_sans_elec <- susoreview::create_issue(
   df_attribs = attribs,
@@ -335,7 +335,7 @@ issue_utiliser_clim_sans_elec <- susoreview::create_issue(
 
 # utilise un ventilateur sans accès à l'électricité
 desc_utiliser_ventilateur_sans_elec <- paste(
-  "Le ménage utilise un ventilateur mais n'a pas l'accès à l'électricité"
+  "Le ménage utilise un ventilateur mais n'a pas l'accès à l'électricité."
 )
 issue_utiliser_ventilateur_sans_elec <- susoreview::create_issue(
   df_attribs = attribs,
@@ -432,7 +432,7 @@ issue_utiliser_groupe_elec_sans_posseder <- susoreview::create_issue(
     "Dans le module 11, le ménage déclare utiliser un groupe électrogène",
     "en cas de panne du réseau d'électricité.",
     "Or, dans le module 12, le ménage déclare ne pas posséder",
-    "un groupe électrogène",
+    "un groupe électrogène.",
     "Veuillez confirmer les réponses et corriger l'incohérence."
   )
 )
@@ -482,7 +482,7 @@ issue_membre_internet_sans_connexion_menage <- susoreview::create_issue(
 
 # la maison est connectée à l'internet sans qu'aucun membre ne le soit
 desc_internet_maison_sans_membre_connecte <- paste(
-  "Le ménage est connecté à l'internet mais aucun membre l'est"
+  "Le ménage est connecté à l'internet mais aucun membre l'est."
 )
 issue_internet_maison_sans_membre_connecte <- susoreview::create_issue(
   df_attribs = attribs,
@@ -736,8 +736,8 @@ issues_intrants_global_sans_utiliser_parcelle <- purrr::pmap(
       "{..3} utilisé dans 16B sans être {..4}é sur une parcelle dans 16{..5}."
     ),
     comment = glue::glue(
-      "ERREUR: {..3} utilisé sans être {..4}é sur une parcelle",
-      "Dans le module 16B, le ménage dit avoir utilisé {..3}",
+      "ERREUR: {..3} utilisé sans être {..4}é sur une parcelle.",
+      "Dans le module 16B, le ménage dit avoir utilisé {..3},",
       "mais aucune parcelle dans le module 16{..5} ne voit son {..4}ation.",
       "Veuillez corriger ou expliquer cette incohérence.",
       .sep = " "
@@ -758,9 +758,9 @@ issues_intrants_utiliser_parcelle_sans_global <- purrr::pmap(
       "{..3} {..4}é dans 16B sans être utilisé sur une parcelle dans 16{..5}."
     ),
     comment = glue::glue(
-      "ERREUR: {..3} utilisé sans être {..4}é sur une parcelle",
-      "Dans le module 16{..5}, {..3} est {..4}é sur au moins une parcelle",
-      "mais n'est pas déclaré comme étant utilisé dans le module 16C",
+      "ERREUR: {..3} utilisé sans être {..4}é sur une parcelle.",
+      "Dans le module 16{..5}, {..3} est {..4}é sur au moins une parcelle,",
+      "mais n'est pas déclaré comme étant utilisé dans le module 16C.",
       "Veuillez corriger ou expliquer cette incohérence.",
       .sep = " "
     )
@@ -857,7 +857,7 @@ issues_conso_propre_prod_sans_cultiver <- purrr::pmap(
       !!rlang::sym(glue::glue("cultive_{..1}")) == 0,
     desc = "{..2} consommé de sa propre production sans être cultivé",
     comment = glue::glue(
-      "ERREUR: {..2} consommé de sa propre production sans être cultivé",
+      "ERREUR: {..2} consommé de sa propre production sans être cultivé.",
       "Dans le module 7B, on dit avoir consommé {..2} de sa propre production.",
       "Or, dans le module 16C, {..2} n'est cultivé sur aucune parcelle.",
       "Veuillez corriger ou expliquer cet contradiction.",
@@ -915,7 +915,7 @@ issues_conso_propre_prod_sans_elever <- purrr::pmap(
       !!rlang::sym(glue::glue("produit_viande_{..1}")) == 0,
     desc = "{..2} consommé de sa propre production sans élevage",
     comment = glue::glue(
-      "ERREUR: {..2} consommé de sa propre production sans être cultivé",
+      "ERREUR: {..2} consommé de sa propre production sans être cultivé.",
       "Dans le module 7B, on dit avoir consommé {..2} de sa propre production.",
       "Or, dans le module 17, il n'y a pas {..3}.",
       "Veuillez corriger ou expliquer cet contradiction.",
@@ -971,7 +971,7 @@ issues_conso_propre_prod_sans_pecher_chasser_cueillir <- purrr::pmap(
       !!rlang::sym(glue::glue("{..3}_{..1}")) == 0,
     desc = "{..4} consommé de sa propre production sans être {..5}",
     comment = glue::glue(
-      "ERREUR: {..4} consommé de sa propre production sans être cultivé",
+      "ERREUR: {..4} consommé de sa propre production sans être cultivé.",
       "Dans le module 7B, on dit avoir consommé {..2} de sa propre production.",
       "Or, dans le module {..2}, {..4} n'a été {..5}.",
       "Veuillez corriger ou expliquer cet contradiction.",
@@ -1006,10 +1006,10 @@ issue_equipement_agric_sans_pratiquer <- purrr::pmap(
       !!rlang(glue::glue("pratique_{..1}")) == 0,
     desc = "Possède des équipements de {..3} sans pratiquer {..3}",
     comment = glue::glue(
-      "ERREUR: Possède des équipements de {..3} sans pratiquer {..3}",
-      "Dans le module 19, le ménage déclare posséder des équipements de {..3}",
-      "Or dans le module {..2}, on dit ne pas pratiquer {..3}",
-      "C'est à dire, le ménage déclare ne pas {..4}",
+      "ERREUR: Possède des équipements de {..3} sans pratiquer {..3}.",
+      "Dans le module 19, le ménage déclare posséder des équipements de {..3}.",
+      "Or dans le module {..2}, on dit ne pas pratiquer {..3}.",
+      "C'est à dire, le ménage déclare ne pas {..4}.",
       "Veuillez corriger ou expliquer cet contradiction.",
       .sep = " "
     )
