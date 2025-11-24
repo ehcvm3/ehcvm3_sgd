@@ -1,6 +1,6 @@
 #' Identifier outliers
 #'
-#' @param df Data frame. 
+#' @param df Data frame.
 #' @param var Bare variable name. Variable to check for outliers.
 #' @param by tidy-select expression
 #' (e.g., `c(var1, var2)`, `dplyr::starts_with("var")`)
@@ -322,9 +322,11 @@ identify_outliers <- function(
     # that is, to all roster ID variables
     roster_vars <- id_vars[!id_vars %in% main_id_vars]
 
-    # if any roster ID variables are present, construct coordinates to locate the variable
+    # if any roster ID variables are present, construct coordinates to locate
+    # the variable
     # otherwise, do not construct the coordinates
-    # in both cases, create one issue per outlier observation with a comment type
+    # in both cases, create one issue per outlier observation with a comment
+    # type
     if (length(roster_vars) > 0) {
 
       # construct a comma-separated series of roster coordinates
