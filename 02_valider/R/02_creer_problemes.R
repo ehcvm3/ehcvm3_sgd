@@ -1098,6 +1098,7 @@ issue_depenses_educ <- purrr::pmap(
   .f = ~ identify_outliers(
     df = membres,
     var = !!rlang::sym(..1),
+    exclude = c(0, 9999),
     type = 2,
     desc = glue::glue("Valeur extrême pour {..2}"),
     comment = paste(
@@ -1154,6 +1155,7 @@ issue_depenses_sante <- purrr::pmap(
   .f = ~ identify_outliers(
     df = membres,
     var = !!rlang::sym(..1),
+    exclude = c(0, 9999),
     type = 2,
     desc = glue::glue("Valeur extrême pour {..2}"),
     comment = paste(
@@ -1263,6 +1265,7 @@ issue_depenses_repos_hors_menage <- purrr::pmap(
   .f = ~ identify_outliers(
     df = base::get(x = ..3, envir = rlang::global_env()),
     var = !!rlang::sym(..1),
+    exclude = c(0, 9999),
     type = 2,
     desc = glue::glue("Valeur extrême pour {..2}"),
     comment = paste(
@@ -1289,7 +1292,7 @@ issue_depenses_repos_hors_menage <- purrr::pmap(
 issue_quantite_totale_conso_alim <- identify_outliers(
   df = conso_alim_7j,
   var = s07bq03a,
-  by = c(aliment__id, s07bq03b, s07bq03c),
+  exclude = c(0, 9999),
   type = 1,
   desc = "Valeur extrême pour la quantité totale de consommation",
   comment = paste(
@@ -1321,7 +1324,7 @@ conso_alim_7j_prix_unitaire <- conso_alim_7j |>
 issue_prix_unitaire_conso_alim <- identify_outliers(
   df = conso_alim_7j_prix_unitaire,
   var = prix_unitaire,
-  by = c(aliment__id, s07bq07b, s07bq07c),
+  exclude = c(9999),
   type = 1,
   desc = "Valeur extrême pour le prix unitaire d'achat du produit",
   comment = paste(
@@ -1365,7 +1368,7 @@ issue_conso_non_alim <- purrr::pmap(
   .f = ~ identify_outliers(
     df = base::get(x = ..1, envir = rlang::global_env()),
     var = !!rlang::sym(..2),
-    by = !!rlang::sym(..4),
+    exclude = c(9999),
     type = 1,
     desc = "Valeur extrême pour la consommation dans les {..3}.",
     comment = paste(
