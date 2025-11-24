@@ -171,7 +171,7 @@ identify_outliers <- function(
       }
     })() |>
     dplyr::summarise(
-      n_obs = dplyr::n(),
+      n_obs = base::sum(is.na({{var}}), na.rm = TRUE),
       med = stats::median({{var}}, na.rm = TRUE),
       mad = stats::mad({{var}}, na.rm = TRUE)
     ) |>
