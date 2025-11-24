@@ -153,8 +153,17 @@ identify_outliers <- function(
     # transform values before outlier detection
     (\(x) {
       if (transform == "log") {
+        # set to `NA` any values for which `log` is undefined
+        # prevents `Inf` and `NaN` values
         dplyr::mutate(
           .data = x,
+          {{var}} := dplyr::if_else(
+            condition = {{var}} <= 0,
+            NA_real_,
+            {{var}}
+          )
+        ) |>
+        dplyr::mutate(
           {{var}} := log({{var}})
         )
       } else {
