@@ -1498,7 +1498,7 @@ issue_conso_non_alim <- purrr::pmap(
     transform = "log",
     bounds = "upper",
     type = 1,
-    desc = "Valeur extrême pour la consommation dans les {..3}.",
+    desc = glue::glue("Valeur extrême pour la consommation dans les {..3}."),
     comment = paste(
       "ERREUR: Valeur extrême identifée pour la consommation de",
       "de {labelled::to_character(",
