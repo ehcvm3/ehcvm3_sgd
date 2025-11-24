@@ -1077,6 +1077,73 @@ issue_culture_principale_absente <- culture_principale |>
 # ==============================================================================
 
 # ==============================================================================
+# créer des bases avec les variables de strate
+# ==============================================================================
+
+membres_plus_strate <-  membres |>
+	dplyr::left_join(
+    y = dplyr::select(
+      .data = menages,
+      interview__id, s00q01, s00q04
+    ),
+    by = dplyr::join_by(interview__id)
+  )
+
+conso_alim_7j_plus_strate <- conso_alim_7j |>
+	dplyr::left_join(
+    y = dplyr::select(
+      .data = menages,
+      interview__id, s00q01, s00q04
+    ),
+    by = dplyr::join_by(interview__id)
+  )
+
+depense_7j_plus_strate <- depense_7j |>
+	dplyr::left_join(
+    y = dplyr::select(
+      .data = menages,
+      interview__id, s00q01, s00q04
+    ),
+    by = dplyr::join_by(interview__id)
+  )
+
+depense_30j_plus_strate <- depense_30j |>
+	dplyr::left_join(
+    y = dplyr::select(
+      .data = menages,
+      interview__id, s00q01, s00q04
+    ),
+    by = dplyr::join_by(interview__id)
+  )
+
+depense_3m_plus_strate <- depense_3m |>
+	dplyr::left_join(
+    y = dplyr::select(
+      .data = menages,
+      interview__id, s00q01, s00q04
+    ),
+    by = dplyr::join_by(interview__id)
+  )
+
+depense_6m_plus_strate <- depense_6m |>
+	dplyr::left_join(
+    y = dplyr::select(
+      .data = menages,
+      interview__id, s00q01, s00q04
+    ),
+    by = dplyr::join_by(interview__id)
+  )
+
+depense_12m_plus_strate <- depense_12m |>
+	dplyr::left_join(
+    y = dplyr::select(
+      .data = menages,
+      interview__id, s00q01, s00q04
+    ),
+    by = dplyr::join_by(interview__id)
+  )
+
+# ==============================================================================
 # [2]	EDUCATION (INDIVIDUS AGES DE 3 ANS ET PLUS)
 # ==============================================================================
 
@@ -1096,8 +1163,9 @@ depenses_educ_specs <- tibble::tribble(
 issue_depenses_educ <- purrr::pmap(
   .l = depenses_educ_specs,
   .f = ~ identify_outliers(
-    df = membres,
+    df = membres_plus_strate,
     var = !!rlang::sym(..1),
+    by = c(s00q01, s00q04),
     exclude = c(0, 9999),
     transform = "log",
     bounds = "upper",
@@ -1155,8 +1223,9 @@ depenses_sante_spec <- tibble::tribble(
 issue_depenses_sante <- purrr::pmap(
   .l = depenses_sante_spec,
   .f = ~ identify_outliers(
-    df = membres,
+    df = membres_plus_strate,
     var = !!rlang::sym(..1),
+    by = c(s00q01, s00q04),
     exclude = c(0, 9999),
     transform = "log",
     bounds = "upper",
@@ -1260,7 +1329,7 @@ repas_hors_menage_specs <- tibble::tribble(
     df_nom = dplyr::if_else(
       condition = grepl(x = var, pattern = "b$"),
       true = "menages",
-      false = "membres"
+      false = "membres_plus_strate"
     )
   )
 
@@ -1269,6 +1338,7 @@ issue_depenses_repos_hors_menage <- purrr::pmap(
   .f = ~ identify_outliers(
     df = base::get(x = ..3, envir = rlang::global_env()),
     var = !!rlang::sym(..1),
+    by = c(s00q01, s00q04),
     exclude = c(0, 9999),
     transform = "log",
     bounds = "upper",
@@ -1296,8 +1366,9 @@ issue_depenses_repos_hors_menage <- purrr::pmap(
 # ------------------------------------------------------------------------------
 
 issue_quantite_totale_conso_alim <- identify_outliers(
-  df = conso_alim_7j,
+  df = conso_alim_7j_plus_strate,
   var = s07bq03a,
+  by = c(s00q01, s00q04, aliment__id, s07bq03b, s07bq03c),
   exclude = c(0, 9999),
   transform = "log",
   bounds = "upper",
@@ -1320,7 +1391,7 @@ issue_quantite_totale_conso_alim <- identify_outliers(
 # ------------------------------------------------------------------------------
 
 # calculer le prix unitaire
-conso_alim_7j_prix_unitaire <- conso_alim_7j |>
+conso_alim_7j_prix_unitaire <- conso_alim_7j_plus_strate |>
 	dplyr::mutate(
     prix_unitaire = dplyr::if_else(
       condition = !is.na(s07bq08) & !is.na(s07bq07a),
@@ -1332,6 +1403,7 @@ conso_alim_7j_prix_unitaire <- conso_alim_7j |>
 issue_prix_unitaire_conso_alim <- identify_outliers(
   df = conso_alim_7j_prix_unitaire,
   var = prix_unitaire,
+  by = c(s00q01, s00q04, aliment__id, s07bq07b, s07bq07c),
   exclude = c(9999),
   transform = "log",
   bounds = "upper",
@@ -1365,19 +1437,23 @@ issue_prix_unitaire_conso_alim <- identify_outliers(
 
 conso_non_alim_specs <- tibble::tribble(
   ~ base, ~ var, ~ periode,
-  "depense_7j", "s09Bq03", "7 derniers jours",
-  "depense_30j", "s09Cq03", "30 derniers jours",
-  "depense_3m", "s09Dq03", "3 derniers mois",
-  "depense_6m", "s09Eq03", "6 derniers mois",
-  "depense_12m", "s09Fq03", "12 derniers mois"
+  "depense_7j_plus_strate", "s09Bq03", "7 derniers jours",
+  "depense_30j_plus_strate", "s09Cq03", "30 derniers jours",
+  "depense_3m_plus_strate", "s09Dq03", "3 derniers mois",
+  "depense_6m_plus_strate", "s09Eq03", "6 derniers mois",
+  "depense_12m_plus_strate", "s09Fq03", "12 derniers mois"
 ) |>
-	dplyr::mutate(id = glue::glue("{base}__id"))
+	dplyr::mutate(
+    id = glue::glue("{base}__id"),
+    id = sub(id, pattern = "_plus_strate", replacement = "")
+  )
 
 issue_conso_non_alim <- purrr::pmap(
   .l = conso_non_alim_specs,
   .f = ~ identify_outliers(
     df = base::get(x = ..1, envir = rlang::global_env()),
     var = !!rlang::sym(..2),
+    by = c(s00q01, s00q04, !!rlang::sym(..4)),
     exclude = c(9999),
     transform = "log",
     bounds = "upper",
