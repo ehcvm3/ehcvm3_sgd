@@ -1156,7 +1156,7 @@ depenses_educ_specs <- tibble::tribble(
   "s02q25", "uniformes",
   "s02q26", "cantine scolaire + restauration",
   "s02q27", "transport scolaire",
-  "s02q28", "autres déponses scolaires",
+  "s02q28", "autres dépenses scolaires",
   "s02q29", "bourse/allocation",
 )
 
